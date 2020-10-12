@@ -1,0 +1,23 @@
+{
+    "manifest_version": 2,
+   
+    "name": "Outlier Desktop",
+    "version": "0.1.0",
+    "description": "Make outlier desktop not suck too much",
+   
+    "content_scripts": [{
+      "css": ["styles.css"],
+      "js": ["content.js"],
+      "matches": ["https://outlier.nyc/*"]
+    }],
+    "icons": {
+      "48": "swanbs.jpg"
+    },
+    "options_ui": {
+      "page": "options.html",
+      "open_in_tab": true
+    },
+    "permissions": [
+      "storage"
+    ]
+  }

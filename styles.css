@@ -1,0 +1,22 @@
+body {
+  max-width: 1000px !important;
+  margin: 0 auto !important;
+}
+
+.feature-image:first-of-type {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    z-index: -1;
+}
+
+.feature-image:nth-of-type(2) {
+    max-height: 300px;
+}
+
+.stonks {
+  left: unset !important;
+  right: 0 !important;
+  top: -1.1em !important;
+  font-size: .85em !important;
+}
