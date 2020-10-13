@@ -1,5 +1,5 @@
 body {
-  max-width: 1000px !important;
+  max-width: 1000px;
   margin: 0 auto !important;
 }
 
@@ -10,8 +10,8 @@ body {
     z-index: -1;
 }
 
-.feature-image:nth-of-type(2) {
-    max-height: 300px;
+.od-feature-img > img {
+    max-height: 900px;
 }
 
 .stonks {
