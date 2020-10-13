@@ -3,15 +3,29 @@ body {
   margin: 0 auto !important;
 }
 
+#PageContainer {
+  margin-top: 130px;
+}
+
 .product-single > .feature-image:first-of-type {
-    position: fixed;
-    width: 100%;
-    left: 0;
-    z-index: -1;
+  position: fixed;
+  width: 100%;
+  left: 0;
+  z-index: -1;
+}
+
+.mobile-nav__search {
+  top: unset !important;
+  position: relative  !important;
+}
+
+.mobile-nav__link {
+  margin-left: 2rem;
 }
 
 #od-feature-img > img {
-    max-height: 900px;
+  max-height: 900px;
+  margin-top: 130px;
 }
 
 #od-nav-menu {
@@ -19,10 +33,22 @@ body {
   left: 0;
   width: 100vw;
   z-index: 21;
-  padding: 0;
+  padding: 8px 50px 0 50px;
   margin: 0;
   border-bottom: 1px solid black;
   background: #fff;
+
+  list-style: none;
+  -ms-box-orient: horizontal;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -moz-flex;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+
   font-family: "Knockout 92 A","Knockout 92 B",sans-serif;
   font-size: 24px;
   text-transform: uppercase;

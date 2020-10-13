@@ -58,44 +58,49 @@ function open_side_nav(menuWidth) {
     navDrawer.style.display  = 'block';
     navDrawer.style.left  = '0';
     var navContainer = document.getElementById('NavContainer');
-    var navMenuLinks = navContainer.getElementsByClassName('mobile-nav__item');
-    //navContainer.remove();
+    var horizontalMenu = document.createElement('ul');
+    horizontalMenu.id = 'od-nav-menu';
+    var menuItems = navContainer.getElementsByClassName('mobile-nav__item')
+    for (var i = 0; i < menuItems.length; i++) {
+        horizontalMenu.appendChild(menuItems.item(i).cloneNode(true));
+    }
+    navDrawer.insertBefore(horizontalMenu, document.getElementById('SearchContainer'));
+    navContainer.remove();
 }
 
 function main() {
-    // adjust page for options
     chrome.storage.sync.get({
         odMainContentWidth: '1000',
         odFeatureImgHeight: '900',
         odNavMenuWidth: '150',
         odProductStocks: true
     }, function(items) {
-        if (items.odProductStocks === true) {
-            try {
-                show_stock_counts();
-            } catch (error) {
-                console.log(error);
-            }
-        }
         document.body.style.maxWidth = items.odMainContentWidth + 'px';
-        document.getElementById('od-feature-img').children[0].style.maxHeight = items.odFeatureImgHeight + 'px';
         open_side_nav(items.odNavMenuWidth);
-    });
-    if (window.location.href.indexOf("products") > -1) {
-        // do advertised functions
-        try {
-            adjust_feature_img();
-        } catch (error) {
-            console.log(error);
-        }
-        if (window.location.href.indexOf("wtf") < 0) {
+        if (window.location.href.indexOf("products") > -1) {
             try {
-                move_size_chart();
+                adjust_feature_img();
+                document.getElementById('od-feature-img').children[0].style.maxHeight = items.odFeatureImgHeight + 'px';
             } catch (error) {
                 console.log(error);
             }
+            if (window.location.href.indexOf("wtf") < 0) {
+                try {
+                    move_size_chart();
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+            if (items.odProductStocks === true) {
+                try {
+                    show_stock_counts();
+                } catch (error) {
+                    console.log(error);
+                }
+            }
         }
-    }
+    });
+    
 }
 
 main();
