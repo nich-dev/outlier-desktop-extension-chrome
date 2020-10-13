@@ -68,15 +68,23 @@ function open_side_nav() {
     }
     navDrawer.insertBefore(horizontalMenu, document.getElementById('SearchContainer'));
     navContainer.remove();
-    document.getElementById('PageContainer').style.marginTop = '130px';
+    if (window.location.href.indexOf("collections") > -1
+        && window.location.href.indexOf("products") < 0) {
+        try {
+            document.getElementsByClassName('fixed-header')[0].style.paddingTop = '0px';
+        } catch (error) {
+            console.log(error);
+        }
+    } else {
+        document.getElementById('PageContainer').style.marginTop = '130px';
+    }
     var logo = document.getElementsByClassName('site-header__logo')[0];
     logo.style.display = 'none';
     logo.style.height = '0px';
-    try {
-        document.getElementsByClassName('fixed-header')[0].style.paddingTop = '0px';
-    } catch (error) {
-        console.log(error);
-    }
+}
+
+function close_search() {
+    document.getElementsByClassName('close-search')[0].click();
 }
 
 function main() {
