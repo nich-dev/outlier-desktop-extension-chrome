@@ -3,10 +3,6 @@ body {
   margin: 0 auto !important;
 }
 
-#PageContainer {
-  margin-top: 130px;
-}
-
 .product-single > .feature-image:first-of-type {
   position: fixed;
   width: 100%;
@@ -22,6 +18,7 @@ body {
 .mobile-nav__link {
   margin-left: 2rem;
 }
+
 
 #od-feature-img > img {
   max-height: 900px;

@@ -29,7 +29,7 @@ function restore_options() {
     odHorizNavMenu: true
   }, function(items) {
     document.getElementById('product-stocks').checked = items.odProductStocks;
-    document.getElementById('product-stocks').checked = items.odHorizNavMenu;
+    document.getElementById('horiz-menu').checked = items.odHorizNavMenu;
     document.getElementById('main-content-width').value = items.odMainContentWidth;
     document.getElementById('feature-img-height').value = items.odFeatureImgHeight;
   });
