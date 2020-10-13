@@ -10,7 +10,7 @@ body {
     z-index: -1;
 }
 
-.od-feature-img > img {
+#od-feature-img > img {
     max-height: 900px;
 }
 

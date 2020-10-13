@@ -5,7 +5,7 @@ function adjust_feature_img() {
     var content = product[0].getElementsByClassName('main-content-block')[0];
     var clonedImg = product[0].getElementsByClassName('feature-image')[0].cloneNode(true);
     clonedImg.classList.remove("feature-image");
-    clonedImg.classList.add("od-feature-img");
+    clonedImg.id = "od-feature-img";
     content.prepend(clonedImg);
 }
 
@@ -56,6 +56,7 @@ function main() {
         // adjust page for options
         chrome.storage.sync.get({
             odMainContentWidth: '1000',
+            odFeatureImgHeight: '900',
             odProductStocks: true
         }, function(items) {
             if (items.odProductStocks === true) {
@@ -66,6 +67,7 @@ function main() {
                 }
             }
             document.body.style.maxWidth = items.odMainContentWidth + 'px';
+            document.getElementById('od-feature-img').children[0].style.maxHeight = items.odFeatureImgHeight + 'px';
         });
     }
 }
