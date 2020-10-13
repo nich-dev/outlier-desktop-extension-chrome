@@ -38,6 +38,7 @@ function show_stock_counts(){
     });
 }
 
+// remake a node. used to strip events
 function recreate_node(el, withChildren) {
     if (withChildren) {
       el.parentNode.replaceChild(el.cloneNode(true), el);
@@ -49,12 +50,13 @@ function recreate_node(el, withChildren) {
     }
   }
 
-function open_side_nav(menuWidth) {
+// make sidenav into a top nav
+function open_side_nav() {
     var navButton = document.getElementsByClassName('js-drawer-open-left')[0];
     recreate_node(navButton, true);
     var navDrawer = document.getElementById('NavDrawer');
     navDrawer.style.minWidth = '0px';
-    navDrawer.style.width = menuWidth + 'px';
+    navDrawer.style.width = '0px';
     navDrawer.style.display  = 'block';
     navDrawer.style.left  = '0';
     var navContainer = document.getElementById('NavContainer');
@@ -72,11 +74,13 @@ function main() {
     chrome.storage.sync.get({
         odMainContentWidth: '1000',
         odFeatureImgHeight: '900',
-        odNavMenuWidth: '150',
+        odHorizNavMenu: true,
         odProductStocks: true
     }, function(items) {
         document.body.style.maxWidth = items.odMainContentWidth + 'px';
-        open_side_nav(items.odNavMenuWidth);
+        if (items.odHorizNavMenu === true) {
+            open_side_nav();
+        }
         if (window.location.href.indexOf("products") > -1) {
             try {
                 adjust_feature_img();
