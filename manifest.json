@@ -2,7 +2,7 @@
     "manifest_version": 2,
    
     "name": "Outlier Desktop",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Make outlier desktop not suck too much",
    
     "content_scripts": [{
@@ -11,7 +11,9 @@
       "matches": ["https://outlier.nyc/*"]
     }],
     "icons": {
-      "48": "swanbs.jpg"
+      "16": "swanbs16.jpg",
+      "48": "swanbs.jpg",
+      "128": "swanbs128.jpg"
     },
     "options_ui": {
       "page": "options.html",
