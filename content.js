@@ -47,10 +47,12 @@ function main() {
         } catch (error) {
             console.log(error);
         }
-        try {
-            move_size_chart();
-        } catch (error) {
-            console.log(error);
+        if (window.location.href.indexOf("wtf") < 0) {
+            try {
+                move_size_chart();
+            } catch (error) {
+                console.log(error);
+            }
         }
 
         // adjust page for options
