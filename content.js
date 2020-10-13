@@ -50,10 +50,24 @@ function recreate_node(el, withChildren) {
     }
   }
 
+function close_search() {
+    document.getElementsByClassName('close-search')[0].click();
+}
+
+function go_home() {
+    window.location = '/';   
+}
+
+function make_logo_home() {
+    document.getElementsByClassName('js-drawer-open-left')[0]
+        .addEventListener('click', go_home);
+}
+
 // make sidenav into a top nav
 function open_side_nav() {
     var navButton = document.getElementsByClassName('js-drawer-open-left')[0];
     recreate_node(navButton, true);
+    make_logo_home();
     var navDrawer = document.getElementById('NavDrawer');
     navDrawer.style.minWidth = '0px';
     navDrawer.style.width = '0px';
@@ -68,15 +82,19 @@ function open_side_nav() {
     }
     navDrawer.insertBefore(horizontalMenu, document.getElementById('SearchContainer'));
     navContainer.remove();
-    document.getElementById('PageContainer').style.marginTop = '130px';
+    if (window.location.href.indexOf("collections") > -1
+        && window.location.href.indexOf("products") < 0) {
+        try {
+            document.getElementsByClassName('fixed-header')[0].style.paddingTop = '0px';
+        } catch (error) {
+            console.log(error);
+        }
+    } else {
+        document.getElementById('PageContainer').style.marginTop = '130px';
+    }
     var logo = document.getElementsByClassName('site-header__logo')[0];
     logo.style.display = 'none';
     logo.style.height = '0px';
-    try {
-        document.getElementsByClassName('fixed-header')[0].style.paddingTop = '0px';
-    } catch (error) {
-        console.log(error);
-    }
 }
 
 function main() {
@@ -113,7 +131,7 @@ function main() {
             }
         }
     });
-    
+    document.getElementById('SearchContainer').addEventListener('click', close_search);
 }
 
 main();
