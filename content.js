@@ -38,29 +38,72 @@ function show_stock_counts(){
     });
 }
 
+// remake a node. used to strip events
+function recreate_node(el, withChildren) {
+    if (withChildren) {
+      el.parentNode.replaceChild(el.cloneNode(true), el);
+    }
+    else {
+      var newEl = el.cloneNode(false);
+      while (el.hasChildNodes()) newEl.appendChild(el.firstChild);
+      el.parentNode.replaceChild(newEl, el);
+    }
+  }
+
+// make sidenav into a top nav
+function open_side_nav() {
+    var navButton = document.getElementsByClassName('js-drawer-open-left')[0];
+    recreate_node(navButton, true);
+    var navDrawer = document.getElementById('NavDrawer');
+    navDrawer.style.minWidth = '0px';
+    navDrawer.style.width = '0px';
+    navDrawer.style.display  = 'block';
+    navDrawer.style.left  = '0';
+    var navContainer = document.getElementById('NavContainer');
+    var horizontalMenu = document.createElement('ul');
+    horizontalMenu.id = 'od-nav-menu';
+    var menuItems = navContainer.getElementsByClassName('mobile-nav__item')
+    for (var i = 0; i < menuItems.length; i++) {
+        horizontalMenu.appendChild(menuItems.item(i).cloneNode(true));
+    }
+    navDrawer.insertBefore(horizontalMenu, document.getElementById('SearchContainer'));
+    navContainer.remove();
+    document.getElementById('PageContainer').style.marginTop = '130px';
+    var logo = document.getElementsByClassName('site-header__logo')[0];
+    logo.style.display = 'none';
+    logo.style.height = '0px';
+    try {
+        document.getElementsByClassName('fixed-header')[0].style.paddingTop = '0px';
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 function main() {
-    // run product functions
-    if (window.location.href.indexOf("products") > -1) {
-        // do advertised functions
-        try {
-            adjust_feature_img();
-        } catch (error) {
-            console.log(error);
+    chrome.storage.sync.get({
+        odMainContentWidth: '1000',
+        odFeatureImgHeight: '900',
+        odHorizNavMenu: true,
+        odProductStocks: true
+    }, function(items) {
+        document.body.style.maxWidth = items.odMainContentWidth + 'px';
+        if (items.odHorizNavMenu === true) {
+            open_side_nav();
         }
-        if (window.location.href.indexOf("wtf") < 0) {
+        if (window.location.href.indexOf("products") > -1) {
             try {
-                move_size_chart();
+                adjust_feature_img();
+                document.getElementById('od-feature-img').children[0].style.maxHeight = items.odFeatureImgHeight + 'px';
             } catch (error) {
                 console.log(error);
             }
-        }
-
-        // adjust page for options
-        chrome.storage.sync.get({
-            odMainContentWidth: '1000',
-            odFeatureImgHeight: '900',
-            odProductStocks: true
-        }, function(items) {
+            if (window.location.href.indexOf("wtf") < 0) {
+                try {
+                    move_size_chart();
+                } catch (error) {
+                    console.log(error);
+                }
+            }
             if (items.odProductStocks === true) {
                 try {
                     show_stock_counts();
@@ -68,10 +111,9 @@ function main() {
                     console.log(error);
                 }
             }
-            document.body.style.maxWidth = items.odMainContentWidth + 'px';
-            document.getElementById('od-feature-img').children[0].style.maxHeight = items.odFeatureImgHeight + 'px';
-        });
-    }
+        }
+    });
+    
 }
 
 main();
