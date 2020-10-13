@@ -11,7 +11,9 @@
       "matches": ["https://outlier.nyc/*"]
     }],
     "icons": {
-      "48": "swanbs.jpg"
+      "16": "swanbs16.jpg",
+      "48": "swanbs.jpg",
+      "128": "swanbs128.jpg"
     },
     "options_ui": {
       "page": "options.html",
