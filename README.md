@@ -12,3 +12,4 @@ Various features to make outlier.nyc useable on the Desktop
 * Width of main content (default: 1000px)
 * Height of feature image (default: 900px)
 * Show stock counts (default: on)
+* Make menu horizontal (default: on)
