@@ -14,3 +14,9 @@ Various features to make outlier.nyc useable on the Desktop
 * Height of feature image (default: 900px)
 * Show stock counts (default: on)
 * Make menu horizontal (default: on)
+
+#### Latest Changes (0.2.0)
+* Submitted to the store
+* Added options
+* Added horizontal menu features
+* Bugfixes to keep the script going on various pages
