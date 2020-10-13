@@ -3,7 +3,7 @@ body {
   margin: 0 auto !important;
 }
 
-.feature-image:first-of-type {
+.product-single > .feature-image:first-of-type {
     position: fixed;
     width: 100%;
     left: 0;
@@ -12,6 +12,22 @@ body {
 
 #od-feature-img > img {
     max-height: 900px;
+}
+
+#od-nav-menu {
+  z-index: 21;
+  left: 0;
+  width: 100vw;
+  z-index: 21;
+  padding: 0;
+  margin: 0;
+  border-bottom: 1px solid black;
+  background: #fff;
+  font-family: "Knockout 92 A","Knockout 92 B",sans-serif;
+  font-size: 24px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.0em;
 }
 
 .stonks {

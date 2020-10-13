@@ -38,8 +38,49 @@ function show_stock_counts(){
     });
 }
 
+function recreate_node(el, withChildren) {
+    if (withChildren) {
+      el.parentNode.replaceChild(el.cloneNode(true), el);
+    }
+    else {
+      var newEl = el.cloneNode(false);
+      while (el.hasChildNodes()) newEl.appendChild(el.firstChild);
+      el.parentNode.replaceChild(newEl, el);
+    }
+  }
+
+function open_side_nav(menuWidth) {
+    var navButton = document.getElementsByClassName('js-drawer-open-left')[0];
+    recreate_node(navButton, true);
+    var navDrawer = document.getElementById('NavDrawer');
+    navDrawer.style.minWidth = '0px';
+    navDrawer.style.width = menuWidth + 'px';
+    navDrawer.style.display  = 'block';
+    navDrawer.style.left  = '0';
+    var navContainer = document.getElementById('NavContainer');
+    var navMenuLinks = navContainer.getElementsByClassName('mobile-nav__item');
+    //navContainer.remove();
+}
+
 function main() {
-    // run product functions
+    // adjust page for options
+    chrome.storage.sync.get({
+        odMainContentWidth: '1000',
+        odFeatureImgHeight: '900',
+        odNavMenuWidth: '150',
+        odProductStocks: true
+    }, function(items) {
+        if (items.odProductStocks === true) {
+            try {
+                show_stock_counts();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        document.body.style.maxWidth = items.odMainContentWidth + 'px';
+        document.getElementById('od-feature-img').children[0].style.maxHeight = items.odFeatureImgHeight + 'px';
+        open_side_nav(items.odNavMenuWidth);
+    });
     if (window.location.href.indexOf("products") > -1) {
         // do advertised functions
         try {
@@ -54,23 +95,6 @@ function main() {
                 console.log(error);
             }
         }
-
-        // adjust page for options
-        chrome.storage.sync.get({
-            odMainContentWidth: '1000',
-            odFeatureImgHeight: '900',
-            odProductStocks: true
-        }, function(items) {
-            if (items.odProductStocks === true) {
-                try {
-                    show_stock_counts();
-                } catch (error) {
-                    console.log(error);
-                }
-            }
-            document.body.style.maxWidth = items.odMainContentWidth + 'px';
-            document.getElementById('od-feature-img').children[0].style.maxHeight = items.odFeatureImgHeight + 'px';
-        });
     }
 }
 
