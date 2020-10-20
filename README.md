@@ -9,6 +9,8 @@ Various features to make outlier.nyc useable on the Desktop
 * Moves the menu to a top hoziontal view
 * Clicking anywhere after opening the search will close the damn thing
 
+Store Link: https://chrome.google.com/webstore/detail/outlier-desktop/nmochjmgfcgiacoaedabgedhacchijcn
+
 #### Options
 * Width of main content (default: 1000px)
 * Height of feature image (default: 900px)
@@ -16,7 +18,7 @@ Various features to make outlier.nyc useable on the Desktop
 * Make menu horizontal (default: on)
 
 #### Latest Changes (0.2.0)
-* Submitted to the store
+* Submitted to the store (done, see above)
 * Added options
 * Added horizontal menu features
 * Bugfixes to keep the script going on various pages
