@@ -58,3 +58,21 @@ body {
   top: -1.1em !important;
   font-size: .85em !important;
 }
+
+/* Front page */
+.shopify-section > .text-box {
+  width: unset !important;
+  margin: 0 !important;
+  position: relative !important;
+  font-size: 1.25rem !important;
+}
+
+.shopify-section > img {
+  width: auto !important;
+  max-height: 750px !important;
+  margin: 0 auto !important;
+}
+
+.shopify-section.spacer {
+  display: none !important;
+}

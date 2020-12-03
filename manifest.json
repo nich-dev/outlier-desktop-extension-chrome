@@ -2,7 +2,7 @@
     "manifest_version": 2,
    
     "name": "Outlier Desktop",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "description": "Make outlier desktop not suck too much",
    
     "content_scripts": [{
