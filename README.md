@@ -17,6 +17,9 @@ Store Link: https://chrome.google.com/webstore/detail/outlier-desktop/nmochjmgfc
 * Show stock counts (default: on)
 * Make menu horizontal (default: on)
 
+#### Latest Changes (0.2.1)
+* Better front page
+
 #### Latest Changes (0.2.0)
 * Submitted to the store (done, see above)
 * Added options
