@@ -76,3 +76,29 @@ body {
 .shopify-section.spacer {
   display: none !important;
 }
+
+.mini-carousel {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#product-color-container {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.product-color-cell > .carousel-cell {
+  position: relative !important;
+  display: flex !important;
+  flex-flow: column-reverse;
+  left: 0 !important;
+}
+
+.product-color-cell > .carousel-cell > img {
+  height: 300px;
+  display: flex !important;
+}

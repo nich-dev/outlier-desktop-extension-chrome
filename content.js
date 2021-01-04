@@ -38,6 +38,30 @@ function show_stock_counts(){
     });
 }
 
+// strip carousel feature
+function dismantle_carousel() {
+    var product = document.getElementsByClassName('product-single');
+    var content = product[0].getElementsByClassName('main-content-block')[0];
+    console.log('dismantle_carousel')
+    var colorCarousel = document.getElementsByClassName('mini-carousel')[0];
+    var carouselCells = colorCarousel.getElementsByClassName('carousel-cell');
+    var flexContainer = document.createElement('ul');
+    flexContainer.id = 'product-color-container';
+    content.appendChild(flexContainer);
+    var cellCount = carouselCells.length + 0;
+    for (var i = 0; i < cellCount; i++) {
+        console.log('cell ' + i)
+        i = i + (carouselCells.length - cellCount);
+        var colorItem = document.createElement('li');
+        colorItem.classList.add('product-color-cell');
+        var clonedCell = carouselCells.item(i).cloneNode(true);
+        colorItem.appendChild(clonedCell);
+        flexContainer.appendChild(colorItem);
+    }
+    colorCarousel.remove();
+    document.getElementsByClassName('flickity-viewport')[0].remove();
+}
+
 // remake a node. used to strip events
 function recreate_node(el, withChildren) {
     if (withChildren) {
@@ -130,6 +154,7 @@ function main() {
                 }
             }
         }
+        dismantle_carousel();
     });
     document.getElementById('SearchContainer').addEventListener('click', close_search);
 }
