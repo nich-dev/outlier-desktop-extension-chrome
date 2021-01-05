@@ -48,16 +48,11 @@ function dismantle_carousel() {
     flexContainer.id = 'product-color-container';
     content.appendChild(flexContainer);
     var cellCount = carouselCells.length + 0;
-    var imgHeight = 325;
-    if (cellCount > 4) {
-        imgHeight = 255;
-    }
     for (var i = 0; i < cellCount; i++) {
         i = i + (carouselCells.length - cellCount);
         var colorItem = document.createElement('li');
         colorItem.classList.add('product-color-cell');
         var clonedCell = carouselCells.item(i).cloneNode(true);
-        clonedCell.children[0].style.height = imgHeight + 'px';
         colorItem.appendChild(clonedCell);
         flexContainer.appendChild(colorItem);
     }
