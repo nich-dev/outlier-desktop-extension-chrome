@@ -77,7 +77,7 @@ body {
   display: none !important;
 }
 
-#product-color-container {
+.dismantled-carousel {
   display: flex;
   flex-flow: row wrap;
   justify-content: space-around;

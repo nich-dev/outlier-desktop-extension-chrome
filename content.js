@@ -38,26 +38,29 @@ function show_stock_counts(){
     });
 }
 
-// strip carousel feature
-function dismantle_carousel() {
+// strip color carousel feature
+function dismantle_color_carousel() {
+    var colorCarousel = document.querySelectorAll('.product-single > .mini-carousel');
+    if (colorCarousel.length < 1) {
+        throw('Error finding color carousel');
+    }
+    colorCarousel = colorCarousel[0];
     var product = document.getElementsByClassName('product-single');
     var content = product[0].getElementsByClassName('main-content-block')[0];
-    var colorCarousel = document.getElementsByClassName('mini-carousel')[0];
     var carouselCells = colorCarousel.getElementsByClassName('carousel-cell');
     var flexContainer = document.createElement('ul');
     flexContainer.id = 'product-color-container';
+    flexContainer.classList.add('dismantled-carousel');
     content.appendChild(flexContainer);
     var cellCount = carouselCells.length + 0;
     for (var i = 0; i < cellCount; i++) {
         i = i + (carouselCells.length - cellCount);
         var colorItem = document.createElement('li');
         colorItem.classList.add('product-color-cell');
-        var clonedCell = carouselCells.item(i).cloneNode(true);
-        colorItem.appendChild(clonedCell);
+        colorItem.appendChild(carouselCells.item(i).cloneNode(true));
         flexContainer.appendChild(colorItem);
     }
     colorCarousel.remove();
-    document.getElementsByClassName('flickity-viewport')[0].remove();
 }
 
 // remake a node. used to strip events
@@ -154,7 +157,7 @@ function main() {
             }
             if (items.odDismantleColorCarousel === true) {
                 try {
-                    dismantle_carousel();
+                    dismantle_color_carousel();
                 } catch (error) {
                     console.log(error);
                 }
