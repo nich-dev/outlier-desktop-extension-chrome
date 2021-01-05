@@ -113,3 +113,19 @@ body {
   height: 325px;
   display: flex !important;
 }
+
+.color-name-header {
+  display: flex;
+  flex-flow: row;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.color-name-header > span {
+  text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+}
+
+.color-name-header > img {
+  height: 40px;
+}

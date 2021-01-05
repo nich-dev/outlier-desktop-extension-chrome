@@ -1,3 +1,9 @@
+function getElementByXpath(path) {
+    return ;
+}
+
+////*[@id="product-color-container"]/li/div/h4[contains(text(),"Plumsmoke")]
+//document.evaluate('//*[@id="product-color-container"]/li/div/h4[contains(text(),"Sage")]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
 // add feature image as a background
 // shrink the feature image to content width by removing class
 function adjust_feature_img() {
@@ -61,6 +67,41 @@ function dismantle_color_carousel() {
         flexContainer.appendChild(colorItem);
     }
     colorCarousel.remove();
+}
+
+// get stock color with name of
+
+function add_colors_to_stocktable() {
+    console.log('add_colors_to_stocktable')
+    var stockTable = document.querySelectorAll('.main-content-block .AddToCartForm > table');
+    if (stockTable.length < 1) {
+        throw('Error finding stock table');
+    }
+    stockTable = stockTable[0];
+    var allHeaders = stockTable.querySelectorAll('th');
+    var colorCells = document.querySelectorAll('#product-color-container > .product-color-cell > .carousel-cell');
+    for (var i = 0; i < allHeaders.length; i++) {
+        var th = allHeaders[i];
+        var colorText = allHeaders[i].querySelector('span').textContent.trim().toLowerCase();
+        var m = colorCells.item(i);
+        var img;
+        if (m.querySelector('.product-name').textContent.trim().toLowerCase() == colorText) {
+            img = m.querySelector('img');
+        } else {
+            for (var j = 0; j < colorCells.length; j++) {
+                if (
+                    j != i &&
+                    colorCells[j].querySelector('.product-name').textContent.trim().toLowerCase() == colorText
+                ) {
+                    img = colorCells[j].querySelector('img');
+                    break;
+                }
+            }
+        }
+        th.classList.add('color-name-header');
+        th.prepend(img.cloneNode(true));
+    }
+
 }
 
 // remake a node. used to strip events
@@ -141,26 +182,18 @@ function main() {
             } catch (error) {
                 console.log(error);
             }
+            
             if (window.location.href.indexOf("wtf") < 0) {
-                try {
-                    move_size_chart();
-                } catch (error) {
-                    console.log(error);
-                }
+                try { move_size_chart(); } catch (error) { console.log(error); }
             }
             if (items.odProductStocks === true) {
-                try {
-                    show_stock_counts();
-                } catch (error) {
-                    console.log(error);
-                }
+                try { show_stock_counts(); } catch (error) { console.log(error); }
             }
             if (items.odDismantleColorCarousel === true) {
                 try {
                     dismantle_color_carousel();
-                } catch (error) {
-                    console.log(error);
-                }
+                    add_colors_to_stocktable();
+                } catch (error) { console.log(error); }
             }
         }
     });
