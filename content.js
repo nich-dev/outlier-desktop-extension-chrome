@@ -124,7 +124,8 @@ function main() {
         odMainContentWidth: '1000',
         odFeatureImgHeight: '900',
         odHorizNavMenu: true,
-        odProductStocks: true
+        odProductStocks: true,
+        odDismantleColorCarousel: true
     }, function(items) {
         document.body.style.maxWidth = items.odMainContentWidth + 'px';
         if (items.odHorizNavMenu === true) {
@@ -151,8 +152,14 @@ function main() {
                     console.log(error);
                 }
             }
+            if (items.odDismantleColorCarousel === true) {
+                try {
+                    dismantle_carousel();
+                } catch (error) {
+                    console.log(error);
+                }
+            }
         }
-        dismantle_carousel();
     });
     document.getElementById('SearchContainer').addEventListener('click', close_search);
 }
