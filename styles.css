@@ -76,3 +76,57 @@ body {
 .shopify-section.spacer {
   display: none !important;
 }
+
+.dismantled-carousel {
+  display: flex;
+  flex-flow: row wrap;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.product-color-cell > .carousel-cell {
+  position: relative !important;
+  display: flex !important;
+  flex-flow: column-reverse;
+  left: 0 !important;
+}
+
+.product-color-cell > .carousel-cell > img {
+  height: 265px;
+  display: flex !important;
+}
+
+.product-color-cell:first-child:nth-last-child(1) > .carousel-cell > img,
+.product-color-cell:first-child:nth-last-child(1) ~ .product-color-cell > .carousel-cell > img,
+.product-color-cell:first-child:nth-last-child(2) > .carousel-cell > img,
+.product-color-cell:first-child:nth-last-child(2) ~ .product-color-cell > .carousel-cell > img {
+  height: 350px;
+  display: flex !important;
+}
+
+.product-color-cell:first-child:nth-last-child(3) > .carousel-cell > img,
+.product-color-cell:first-child:nth-last-child(3) ~ .product-color-cell > .carousel-cell > img,
+.product-color-cell:first-child:nth-last-child(4) > .carousel-cell > img,
+.product-color-cell:first-child:nth-last-child(4) ~ .product-color-cell > .carousel-cell > img {
+  height: 325px;
+  display: flex !important;
+}
+
+.color-name-header {
+  display: flex;
+  flex-flow: row;
+  padding: 0 2px !important;
+  margin: 0;
+  list-style: none;
+}
+
+.color-name-header > span {
+  text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+  line-height: 45px;
+  padding: 0 0.5em;
+}
+
+.color-name-header > img {
+  height: 45px;
+}

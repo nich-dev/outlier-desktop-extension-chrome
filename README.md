@@ -8,6 +8,8 @@ Various features to make outlier.nyc useable on the Desktop
 * Shows stock count of products (assume this will get broken at some point when they fix their stuff)
 * Moves the menu to a top hoziontal view
 * Clicking anywhere after opening the search will close the damn thing
+* Dismantles the horizontal color carousel to show the color images in a desktop friendly grid
+* Adds color swatch by the "Add to cart" table color names
 
 Store Link: https://chrome.google.com/webstore/detail/outlier-desktop/nmochjmgfcgiacoaedabgedhacchijcn
 
@@ -16,12 +18,9 @@ Store Link: https://chrome.google.com/webstore/detail/outlier-desktop/nmochjmgfc
 * Height of feature image (default: 900px)
 * Show stock counts (default: on)
 * Make menu horizontal (default: on)
+* Dismantle color carousel (default: on)
 
-#### Latest Changes (0.2.1)
-* Better front page
-
-#### Latest Changes (0.2.0)
-* Submitted to the store (done, see above)
-* Added options
-* Added horizontal menu features
-* Bugfixes to keep the script going on various pages
+#### Latest Changes (0.3.0)
+* Dismantle color carousel option
+* Adds color swatch by the "Add to cart" table color names
+* Small bug errors showing in the console

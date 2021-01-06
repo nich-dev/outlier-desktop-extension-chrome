@@ -38,6 +38,65 @@ function show_stock_counts(){
     });
 }
 
+// strip color carousel feature
+function dismantle_color_carousel() {
+    var colorCarousel = document.querySelectorAll('.product-single > .mini-carousel');
+    if (colorCarousel.length < 1) {
+        throw('Error finding color carousel');
+    }
+    colorCarousel = colorCarousel[0];
+    var product = document.getElementsByClassName('product-single');
+    var content = product[0].getElementsByClassName('main-content-block')[0];
+    var carouselCells = colorCarousel.getElementsByClassName('carousel-cell');
+    var flexContainer = document.createElement('ul');
+    flexContainer.id = 'product-color-container';
+    flexContainer.classList.add('dismantled-carousel');
+    content.appendChild(flexContainer);
+    var cellCount = carouselCells.length + 0;
+    for (var i = 0; i < cellCount; i++) {
+        i = i + (carouselCells.length - cellCount);
+        var colorItem = document.createElement('li');
+        colorItem.classList.add('product-color-cell');
+        colorItem.appendChild(carouselCells.item(i).cloneNode(true));
+        flexContainer.appendChild(colorItem);
+    }
+    colorCarousel.remove();
+}
+
+// get stock color with name of
+function add_colors_to_stocktable() {
+    console.log('add_colors_to_stocktable')
+    var stockTable = document.querySelectorAll('.main-content-block .AddToCartForm > table');
+    if (stockTable.length < 1) {
+        throw('Error finding stock table');
+    }
+    stockTable = stockTable[0];
+    var allHeaders = stockTable.querySelectorAll('th');
+    var colorCells = document.querySelectorAll('#product-color-container > .product-color-cell > .carousel-cell');
+    for (var i = 0; i < allHeaders.length; i++) {
+        var th = allHeaders[i];
+        var colorText = allHeaders[i].querySelector('span').textContent.trim().toLowerCase();
+        var m = colorCells.item(i);
+        var img;
+        if (m.querySelector('.product-name').textContent.trim().toLowerCase() == colorText) {
+            img = m.querySelector('img');
+        } else {
+            for (var j = 0; j < colorCells.length; j++) {
+                if (
+                    j != i &&
+                    colorCells[j].querySelector('.product-name').textContent.trim().toLowerCase() == colorText
+                ) {
+                    img = colorCells[j].querySelector('img');
+                    break;
+                }
+            }
+        }
+        th.classList.add('color-name-header');
+        th.prepend(img.cloneNode(true));
+    }
+
+}
+
 // remake a node. used to strip events
 function recreate_node(el, withChildren) {
     if (withChildren) {
@@ -102,7 +161,8 @@ function main() {
         odMainContentWidth: '1000',
         odFeatureImgHeight: '900',
         odHorizNavMenu: true,
-        odProductStocks: true
+        odProductStocks: true,
+        odDismantleColorCarousel: true
     }, function(items) {
         document.body.style.maxWidth = items.odMainContentWidth + 'px';
         if (items.odHorizNavMenu === true) {
@@ -115,23 +175,26 @@ function main() {
             } catch (error) {
                 console.log(error);
             }
-            if (window.location.href.indexOf("wtf") < 0) {
-                try {
-                    move_size_chart();
-                } catch (error) {
-                    console.log(error);
+            
+            if (window.location.href.indexOf("wtf") < 0 && window.location.href.indexOf("pairings") < 0) {
+                try { move_size_chart(); } catch (error) { console.log(error); }
+                if (items.odDismantleColorCarousel === true) {
+                    try {
+                        dismantle_color_carousel();
+                        add_colors_to_stocktable();
+                    } catch (error) { console.log(error); }
                 }
             }
-            if (items.odProductStocks === true) {
-                try {
-                    show_stock_counts();
-                } catch (error) {
-                    console.log(error);
-                }
+            if (items.odProductStocks === true && window.location.href.indexOf("pairings") < 0) {
+                try { show_stock_counts(); } catch (error) { console.log(error); }
             }
         }
     });
-    document.getElementById('SearchContainer').addEventListener('click', close_search);
+    try {
+        // There was a bug where this would hang and not load the page.
+        document.getElementById('SearchContainer').addEventListener('click', close_search);
+    } catch (error) { console.log(error); }
+    
 }
 
 main();
