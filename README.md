@@ -9,6 +9,7 @@ Various features to make outlier.nyc useable on the Desktop
 * Moves the menu to a top hoziontal view
 * Clicking anywhere after opening the search will close the damn thing
 * Dismantles the horizontal color carousel to show the color images in a desktop friendly grid
+* Adds color swatch by the "Add to cart" table color names
 
 Store Link: https://chrome.google.com/webstore/detail/outlier-desktop/nmochjmgfcgiacoaedabgedhacchijcn
 
@@ -20,5 +21,6 @@ Store Link: https://chrome.google.com/webstore/detail/outlier-desktop/nmochjmgfc
 * Dismantle color carousel (default: on)
 
 #### Latest Changes (0.3.0)
-* Dismantle color carousel
+* Dismantle color carousel option
+* Adds color swatch by the "Add to cart" table color names
 * Small bug errors showing in the console
