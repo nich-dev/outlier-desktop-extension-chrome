@@ -1,9 +1,3 @@
-function getElementByXpath(path) {
-    return ;
-}
-
-////*[@id="product-color-container"]/li/div/h4[contains(text(),"Plumsmoke")]
-//document.evaluate('//*[@id="product-color-container"]/li/div/h4[contains(text(),"Sage")]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
 // add feature image as a background
 // shrink the feature image to content width by removing class
 function adjust_feature_img() {
@@ -70,7 +64,6 @@ function dismantle_color_carousel() {
 }
 
 // get stock color with name of
-
 function add_colors_to_stocktable() {
     console.log('add_colors_to_stocktable')
     var stockTable = document.querySelectorAll('.main-content-block .AddToCartForm > table');
@@ -183,17 +176,17 @@ function main() {
                 console.log(error);
             }
             
-            if (window.location.href.indexOf("wtf") < 0) {
+            if (window.location.href.indexOf("wtf") < 0 && window.location.href.indexOf("pairings") < 0) {
                 try { move_size_chart(); } catch (error) { console.log(error); }
+                if (items.odDismantleColorCarousel === true) {
+                    try {
+                        dismantle_color_carousel();
+                        add_colors_to_stocktable();
+                    } catch (error) { console.log(error); }
+                }
             }
-            if (items.odProductStocks === true) {
+            if (items.odProductStocks === true && window.location.href.indexOf("pairings") < 0) {
                 try { show_stock_counts(); } catch (error) { console.log(error); }
-            }
-            if (items.odDismantleColorCarousel === true) {
-                try {
-                    dismantle_color_carousel();
-                    add_colors_to_stocktable();
-                } catch (error) { console.log(error); }
             }
         }
     });
