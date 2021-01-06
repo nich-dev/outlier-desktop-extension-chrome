@@ -80,7 +80,6 @@ body {
 .dismantled-carousel {
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-around;
   padding: 0;
   margin: 0;
   list-style: none;
@@ -117,15 +116,17 @@ body {
 .color-name-header {
   display: flex;
   flex-flow: row;
-  padding: 0;
+  padding: 0 2px !important;
   margin: 0;
   list-style: none;
 }
 
 .color-name-header > span {
   text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+  line-height: 45px;
+  padding: 0 0.5em;
 }
 
 .color-name-header > img {
-  height: 40px;
+  height: 45px;
 }
