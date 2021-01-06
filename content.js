@@ -190,7 +190,11 @@ function main() {
             }
         }
     });
-    document.getElementById('SearchContainer').addEventListener('click', close_search);
+    try {
+        // There was a bug where this would hang and not load the page.
+        document.getElementById('SearchContainer').addEventListener('click', close_search);
+    } catch (error) { console.log(error); }
+    
 }
 
 main();
