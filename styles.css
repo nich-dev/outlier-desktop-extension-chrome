@@ -122,7 +122,6 @@ body {
 }
 
 .color-name-header > span {
-  text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
   line-height: 45px;
   padding: 0 0.5em;
 }
