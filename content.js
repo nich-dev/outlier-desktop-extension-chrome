@@ -12,8 +12,9 @@ function recreate_node(el, withChildren) {
 
 class SizeChart {
     COMP_KEY = 'odComparisons'
-    SVG_COMP_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M10 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h5v2h2V1h-2v2zm0 15H5l5-6v6zm9-15h-5v2h5v13l-5-6v9h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path></svg>'
-    
+    SVG_COMP_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="20" viewBox="0 0 24 24"><path d="M10 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h5v2h2V1h-2v2zm0 15H5l5-6v6zm9-15h-5v2h5v13l-5-6v9h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path></svg>'
+    COMP_TIP = '<span class="tooltiptext">Add to size comparisons</span>'
+
     // move size chart up to under the size selection
     copy_below_stock() {
         var product = document.getElementsByClassName('product-single');
@@ -23,10 +24,12 @@ class SizeChart {
     
     // add comp buttons to size chart
     add_comparison_buttons() {
-        var sizeChart = document.getElementsByClassName('sizechart')[0];
         var sizeHeaders = document.querySelectorAll('.sizechart:first-of-type > tbody > tr > th + th');
         for (let i = 0; i < sizeHeaders.length; i++) {
-            array[i].appendCHild(SVG_COMP_ICON);
+            sizeHeaders[i].classList.add('clickable');
+            sizeHeaders[i].classList.add('tooltip');
+            sizeHeaders[i].insertAdjacentHTML('beforeend', this.SVG_COMP_ICON);
+            sizeHeaders[i].insertAdjacentHTML('beforeend', this.COMP_TIP);
         }
     }
     
@@ -36,8 +39,8 @@ class SizeChart {
         console.log(name);
         console.log(size);
         console.log(measurements);
-        chrome.storage.local.get([COMP_KEY], function(comps) {
-            console.log('Value currently is ' + comps[COMP_KEY]);
+        chrome.storage.local.get([this.COMP_KEY], function(comps) {
+            console.log('Value currently is ' + comps[this.COMP_KEY]);
         });
     }
 }
@@ -212,6 +215,7 @@ function main() {
             
             if (window.location.href.indexOf("wtf") < 0 && window.location.href.indexOf("pairings") < 0) {
                 try { product.sizeChart.copy_below_stock(); } catch (error) { console.log(error); }
+                try { product.sizeChart.add_comparison_buttons(); } catch (error) { console.log(error); }
                 if (items.odDismantleColorCarousel === true) {
                     try {
                         product.dismantle_color_carousel();
