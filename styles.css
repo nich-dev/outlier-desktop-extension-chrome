@@ -162,6 +162,7 @@ body {
   height: 100%;
   background: #fff;
   filter: drop-shadow(0 0 42px #333);
+  visibility: collapse;
 }
 
 #ComparisonVisibilityBtn {

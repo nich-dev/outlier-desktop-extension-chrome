@@ -243,7 +243,6 @@ class ComparisonFragment {
 
     constructor() {
         this.create_ui();
-        this.initial_data();
     }
 
     create_ui() {
@@ -255,7 +254,22 @@ class ComparisonFragment {
         this.visibilityBtn.innerText = this.hiddenText;
         this.container.appendChild(this.visibilityBtn);
         this.container.insertAdjacentHTML('beforeend', this.TABLE_HTML);
-        document.body.append(this.container);
+        this.visibilityBtn.addEventListener('click', (ev) =>{
+            console.log(ev);
+            var container = document.getElementById('ComparisonTableContainer');
+            switch (container.style.visibility) {
+                case 'collapse':
+                    container.style.visibility = 'visible';
+                    break;
+                case 'visible':
+                    container.style.visibility = 'collapse';
+                    break;
+                default:
+                    container.style.visibility = 'visible';
+                    this.initial_data();
+                    break;
+            }
+        });
     }
 
     initial_data() {
