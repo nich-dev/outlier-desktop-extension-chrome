@@ -148,3 +148,37 @@ body {
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
+
+#ComparisonFragment {
+  width: 100%;
+  bottom: 0;
+  left:0;
+  position: fixed;
+}
+
+#ComparisonTableContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  filter: drop-shadow(0 0 42px #333);
+}
+
+#ComparisonVisibilityBtn {
+  position: relative;
+  width: unset;
+  font-size: 1em;
+  z-index: 2;
+}
+
+#ComparisonHeader > .product {
+}
+
+#ComparisonHeader > .product > span {
+  display: block;
+}
+
+#ComparisonHeader > .product > .product-name {
+  line-height: 8px;
+  font-size: 0.75em;
+}

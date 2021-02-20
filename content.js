@@ -232,13 +232,93 @@ class NavigationBar {
 }
 
 class ComparisonFragment {
+    COMP_KEY = 'odComparisons';
+    TABLE_HTML = '<div id="ComparisonTableContainer"><table id="ComparisonTable" class="sizechart"><tbody><tr id="ComparisonHeader"><th class="thSize">Size</th></tr></tbody></table></div>';
     container; // holder for comparison table
     containerId = 'ComparisonFragment';
+    visibilityBtn; // button for hide/show
+    visibilityBtnId = 'ComparisonVisibilityBtn';
+    hiddenText = 'Size Comparisions';
+    visibleText = 'Close Comparisions';
 
     constructor() {
+        this.create_ui();
+        this.initial_data();
+    }
+
+    create_ui() {
         this.container = document.createElement('div');
-        this.container.id = 'containerId';
-        document.body.append(container);
+        this.container.id = this.containerId;
+        this.visibilityBtn = document.createElement('button');
+        this.visibilityBtn.id = this.visibilityBtnId;
+        this.visibilityBtn.classList.add('btn');
+        this.visibilityBtn.innerText = this.hiddenText;
+        this.container.appendChild(this.visibilityBtn);
+        this.container.insertAdjacentHTML('beforeend', this.TABLE_HTML);
+        document.body.append(this.container);
+    }
+
+    initial_data() {
+        var fragment = this;
+        chrome.storage.local.get([this.COMP_KEY], function(comps) {
+            var storedMeasurements = comps['odComparisons'];
+            if (!storedMeasurements) { storedMeasurements = {}; }
+            else { storedMeasurements = JSON.parse(storedMeasurements) }
+            fragment.populate_table(storedMeasurements);
+            fragment.subscribe_changes();
+        });
+    }
+
+    subscribe_changes() {
+        chrome.storage.onChanged.addListener(function(changes, namespace) {
+            for (var key in changes) {
+              var storageChange = changes[key];
+              console.log('Storage key "%s" in namespace "%s" changed. ' +
+                          'Old value was "%s", new value is "%s".',
+                          key,
+                          namespace,
+                          storageChange.oldValue,
+                          storageChange.newValue);
+            }
+          });
+    }
+
+    add_size(sizeName, columnCount) {
+        var currentSizes = this.container.querySelectorAll('#ComparisonTable > tbody > tr > td:first-of-type');
+        for (let i = 0; i < currentSizes.length; i++) {
+            if (currentSizes[i].innerText === sizeName) {
+                return i + 1;
+            }
+        }
+        console.log('not found, creating row');
+        var newRow = document.createElement('tr');
+        var sizeCell = '<td>' + sizeName + '</td>';
+        newRow.insertAdjacentHTML('beforeend', sizeCell);
+        for (let i = 1; i < columnCount; i++) {
+            newRow.appendChild(document.createElement('td'));
+        }
+        this.container.querySelector('#ComparisonTable > tbody').appendChild(newRow);
+        return currentSizes.length + 1;
+    }
+
+    populate_table(measurements) {
+        console.log(measurements);
+        var headerRow = document.getElementById('ComparisonHeader');
+        Object.entries(measurements).forEach(([key, value]) => {
+            console.log('info from ' + key);
+            headerRow.insertAdjacentHTML('beforeend',
+                '<th class="product" id="' + value.id + '"><span class="product-name">'
+                + value.name + '</span><span class="product-size">' + value.size
+                + '</span></th>'
+            );
+            var columnCount = headerRow.cells.length;
+            for (let i = 0; i < value.measurements.length; i++) {
+                var measurement = value.measurements[i];
+                console.log('adding '+ measurement.name);
+                var rowIndex  = this.add_size(measurement.name, columnCount);
+                console.log('at row num '+ rowIndex);
+            }
+        });
     }
 }
 
@@ -250,7 +330,8 @@ function main() {
         odFeatureImgHeight: '900',
         odHorizNavMenu: true,
         odProductStocks: true,
-        odDismantleColorCarousel: true
+        odDismantleColorCarousel: true,
+        odSizeCopmarison: true
     }, function(items) {
         document.body.style.maxWidth = items.odMainContentWidth + 'px';
         if (items.odHorizNavMenu === true) {
@@ -266,7 +347,9 @@ function main() {
             
             if (window.location.href.indexOf("wtf") < 0 && window.location.href.indexOf("pairings") < 0) {
                 try { product.sizeChart.copy_below_stock(); } catch (error) { console.log(error); }
-                try { product.sizeChart.add_comparison_buttons(); } catch (error) { console.log(error); }
+                if (items.odSizeCopmarison === true) {
+                    try { product.sizeChart.add_comparison_buttons(); } catch (error) { console.log(error); }
+                }
                 if (items.odDismantleColorCarousel === true) {
                     try {
                         product.dismantle_color_carousel();
@@ -277,6 +360,9 @@ function main() {
             if (items.odProductStocks === true && window.location.href.indexOf("pairings") < 0) {
                 try { product.stock.show_stock_counts(); } catch (error) { console.log(error); }
             }
+        }
+        if (items.odSizeCopmarison === true) {
+            var comparisonFragment = new ComparisonFragment();
         }
     });
     try {
