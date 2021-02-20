@@ -51,8 +51,9 @@ class SizeChart {
         var sizeHeaders = document.querySelectorAll('.sizechart:first-of-type > tbody > tr > th + th');
         var position = 0;
         for (let i = 0; i < sizeHeaders.length; i++) {
-            if (sizeHeaders[i].innerText.trim().toLowerCase().indexOf(size.toLowerCase()) > 0) {
-                position = i + 1;
+            var headerText = sizeHeaders[i].innerText.split('\n')[0].trim().toLowerCase();
+            if (headerText === size.trim().toLowerCase()) {
+                position = i + 2;
                 break;
             }
         }
@@ -60,7 +61,7 @@ class SizeChart {
         var measurementRows = firstSizeChart.querySelectorAll('tbody > tr + tr');
         for (let i = 0; i < measurementRows.length; i++) {
             var measurmentName = measurementRows[i].querySelector('td:first-of-type').innerText;
-            var measurmentValue = measurementRows[i].querySelector('td:nth-of-type(' + position + ')');
+            var measurmentValue = measurementRows[i].querySelector('td:nth-of-type(' + position + ')').innerText;
             measurements.push({ name: measurmentName, value: measurmentValue });
         }
         return measurements;
@@ -69,13 +70,16 @@ class SizeChart {
     // saves a size to compare in local storage
     save_comparison(name, size, measurements) {
         var id = name.replaceAll(' ', '_').toLowerCase() + '_' + size.toLowerCase();
-        console.log('save_comparison');
-        console.log(id);
-        console.log(name);
-        console.log(size);
-        console.log(measurements);
-        chrome.storage.local.get([this.COMP_KEY], function(comps) {
-            console.log('Value currently is ' + comps[this.COMP_KEY]);
+        var storageKey = this.COMP_KEY;
+        chrome.storage.local.get([storageKey], function(comps) {
+            var storedMeasurements = comps[storageKey];
+            if (!storedMeasurements) { storedMeasurements = {}; }
+            else { storedMeasurements = JSON.parse(storedMeasurements) }
+            storedMeasurements[id] = { id: id, name: name, size: size, measurements: measurements };
+            storedMeasurements = JSON.stringify(storedMeasurements);
+            chrome.storage.local.set({ odComparisons: storedMeasurements }, function() {
+                console.log('Comparisons updated');
+            });
         });
     }
 }
