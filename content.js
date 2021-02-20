@@ -283,42 +283,60 @@ class ComparisonFragment {
           });
     }
 
-    add_size(sizeName, columnCount) {
+    // if a size row is not in the table, adds it
+    // returns the row index where the size is found
+    add_size(sizeName) {
         var currentSizes = this.container.querySelectorAll('#ComparisonTable > tbody > tr > td:first-of-type');
         for (let i = 0; i < currentSizes.length; i++) {
             if (currentSizes[i].innerText === sizeName) {
-                return i + 1;
+                return i + 2;
             }
         }
-        console.log('not found, creating row');
         var newRow = document.createElement('tr');
-        var sizeCell = '<td>' + sizeName + '</td>';
-        newRow.insertAdjacentHTML('beforeend', sizeCell);
-        for (let i = 1; i < columnCount; i++) {
-            newRow.appendChild(document.createElement('td'));
-        }
+        newRow.insertAdjacentHTML('beforeend', '<td>' + sizeName + '</td>');
         this.container.querySelector('#ComparisonTable > tbody').appendChild(newRow);
-        return currentSizes.length + 1;
+        return currentSizes.length + 2;
     }
 
+    // populates complete table with all given measurments
     populate_table(measurements) {
         console.log(measurements);
         var headerRow = document.getElementById('ComparisonHeader');
+        // measurements is an obj, not an array
         Object.entries(measurements).forEach(([key, value]) => {
-            console.log('info from ' + key);
             headerRow.insertAdjacentHTML('beforeend',
                 '<th class="product" id="' + value.id + '"><span class="product-name">'
                 + value.name + '</span><span class="product-size">' + value.size
                 + '</span></th>'
             );
-            var columnCount = headerRow.cells.length;
+            var columnIndex = headerRow.cells.length;
+            // iterate and add all size values
             for (let i = 0; i < value.measurements.length; i++) {
                 var measurement = value.measurements[i];
-                console.log('adding '+ measurement.name);
-                var rowIndex  = this.add_size(measurement.name, columnCount);
-                console.log('at row num '+ rowIndex);
+                var rowIndex = this.add_size(measurement.name);
+                this.normalizeTable();
+                document.querySelector(
+                    '#ComparisonTable > tbody > tr:nth-child('+rowIndex+') > td:nth-child('+columnIndex+')'
+                ).textContent = measurement.value;
             }
         });
+    }
+
+    // used to fill in "empty" spaces where there should be a cell
+    // copy pasta from https://stackoverflow.com/a/28000575
+    normalizeTable() {
+        var trs = document.getElementById('ComparisonTable').getElementsByTagName('tr'), len = trs.length, max = 0, td;
+        // first we search for the longest table row in terms of # of children 
+        for (var i = len; i--;) {
+            if (trs[i].children.length > max) max = trs[i].children.length;
+        }
+        // now we can fill the other rows
+        for (var j = len; j--;) {
+            while (trs[j].children.length < max) {
+                td = document.createElement('td');
+                trs[j].appendChild(td);
+            }
+        }
     }
 }
 
