@@ -35,6 +35,7 @@ class SizeChart {
         
     }
 
+    // handler for the add comparison click event
     compare_click(event) {
         var headerElement = event.target;
         if (headerElement.classList.contains('tooltip') === false) {
@@ -46,6 +47,7 @@ class SizeChart {
         this.save_comparison(productName, sizeText, measurements);
     }
 
+    // returns list of all name, value measurements in the first size table
     get_measurements(size) {
         var measurements = [];
         var sizeHeaders = document.querySelectorAll('.sizechart:first-of-type > tbody > tr > th + th');
