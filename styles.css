@@ -171,7 +171,17 @@ body {
   z-index: 2;
 }
 
-#ComparisonHeader > .product {
+#ComparisonTable {
+  width: unset;
+  min-width: 75%;
+}
+
+@media all and (min-width: 1250px) {
+  #ComparisonTable {
+    width: unset;
+    min-width: 900px;
+    margin: 0 auto;
+  }
 }
 
 #ComparisonHeader > .product > span {
