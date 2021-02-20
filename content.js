@@ -32,7 +32,6 @@ class SizeChart {
             sizeHeaders[i].insertAdjacentHTML('beforeend', this.COMP_TIP);
             sizeHeaders[i].addEventListener('click', (ev) => this.compare_click(ev));
         }
-        
     }
 
     // handler for the add comparison click event
@@ -229,6 +228,17 @@ class NavigationBar {
         var logo = document.getElementsByClassName('site-header__logo')[0];
         logo.style.display = 'none';
         logo.style.height = '0px';
+    }
+}
+
+class ComparisonFragment {
+    container; // holder for comparison table
+    containerId = 'ComparisonFragment';
+
+    constructor() {
+        this.container = document.createElement('div');
+        this.container.id = 'containerId';
+        document.body.append(container);
     }
 }
 
