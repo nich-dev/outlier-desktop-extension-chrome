@@ -30,12 +30,47 @@ class SizeChart {
             sizeHeaders[i].classList.add('tooltip');
             sizeHeaders[i].insertAdjacentHTML('beforeend', this.SVG_COMP_ICON);
             sizeHeaders[i].insertAdjacentHTML('beforeend', this.COMP_TIP);
+            sizeHeaders[i].addEventListener('click', (ev) => this.compare_click(ev));
         }
+        
+    }
+
+    compare_click(event) {
+        var headerElement = event.target;
+        if (headerElement.classList.contains('tooltip') === false) {
+            headerElement = headerElement.closest('.tooltip');
+        }
+        var sizeText = headerElement.innerText.split('\n')[0];
+        var measurements = this.get_measurements(sizeText);
+        var productName = document.querySelector('.main-content-block > h1').innerText;
+        this.save_comparison(productName, sizeText, measurements);
+    }
+
+    get_measurements(size) {
+        var measurements = [];
+        var sizeHeaders = document.querySelectorAll('.sizechart:first-of-type > tbody > tr > th + th');
+        var position = 0;
+        for (let i = 0; i < sizeHeaders.length; i++) {
+            if (sizeHeaders[i].innerText.trim().toLowerCase().indexOf(size.toLowerCase()) > 0) {
+                position = i + 1;
+                break;
+            }
+        }
+        var firstSizeChart = document.querySelector('.sizechart:first-of-type');
+        var measurementRows = firstSizeChart.querySelectorAll('tbody > tr + tr');
+        for (let i = 0; i < measurementRows.length; i++) {
+            var measurmentName = measurementRows[i].querySelector('td:first-of-type').innerText;
+            var measurmentValue = measurementRows[i].querySelector('td:nth-of-type(' + position + ')');
+            measurements.push({ name: measurmentName, value: measurmentValue });
+        }
+        return measurements;
     }
     
     // saves a size to compare in local storage
     save_comparison(name, size, measurements) {
+        var id = name.replaceAll(' ', '_').toLowerCase() + '_' + size.toLowerCase();
         console.log('save_comparison');
+        console.log(id);
         console.log(name);
         console.log(size);
         console.log(measurements);
