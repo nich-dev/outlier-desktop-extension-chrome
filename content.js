@@ -14,6 +14,20 @@ function get_json_or_empty_obj(str) {
     if (str) { return JSON.parse(str); } else { return {}; }
 }
 
+function swap_table_columns(rows, from, to) {
+    for(const row of rows){
+      row.insertBefore(row.children[from], row.children[to]);
+    }
+}
+
+function get_element_index(node) {
+    var index = 0;
+    while ( (node = node.previousElementSibling) ) {
+        index++;
+    }
+    return index;
+}
+
 class SizeChart {
     COMP_KEY = 'odComparisons'
     SVG_COMP_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="20" viewBox="0 0 24 24"><path d="M10 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h5v2h2V1h-2v2zm0 15H5l5-6v6zm9-15h-5v2h5v13l-5-6v9h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path></svg>'
@@ -235,8 +249,10 @@ class NavigationBar {
 
 class ComparisonFragment {
     COMP_KEY = 'odComparisons';
-    REMOVE_SVG = '<svg class="clickable" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" width="18px" height="18px"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"/></svg>';
+    REMOVE_SVG = '<svg class="clickable remove-btn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" width="18px" height="18px"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"/></svg>';
     TABLE_HTML = '<div id="ComparisonTableContainer"><table id="ComparisonTable" class="sizechart"><tbody><tr id="ComparisonHeader"><th class="thSize">Size</th></tr></tbody></table></div>';
+    SVG_RIGHT = '<svg class="clickable right-btn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="black" width="18px" height="18px"><path d="M0 0h24v24H0z" fill="none"/><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>';
+    SVG_LEFT = '<svg class="clickable left-btn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="black" width="18px" height="18px"><path d="M0 0h24v24H0z" fill="none"/><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>';
     container; // holder for comparison table
     containerId = 'ComparisonFragment';
     visibilityBtn; // button for hide/show
@@ -298,8 +314,7 @@ class ComparisonFragment {
         });
     }
     // TODOS
-    // - show blurb on open of empty comparisons
-    // - re-order columns
+    // - clear empty rows
     subscribe_changes() {
         var fragment = this;
         chrome.storage.onChanged.addListener(function(changes, namespace) {
@@ -355,12 +370,25 @@ class ComparisonFragment {
         }
         var headerRow = document.getElementById('ComparisonHeader');
         headerRow.insertAdjacentHTML('beforeend',
-            '<th class="product" id="' + value.id + '"><span class="product-name tooltip">'
+            '<th class="product" id="' + value.id + '"><span class="product-name">'
             + value.name + ' ' + this.REMOVE_SVG + '</span><span class="product-size">'
-            + value.size + '</span></th>'
+            + this.SVG_LEFT + value.size + this.SVG_RIGHT + '</span></th>'
         );
-        document.getElementById(value.id).addEventListener('click', (ev) => {
+        document.querySelector('#'+value.id+' > .product-name > .remove-btn').addEventListener('click', (ev) => {
             this.remove_comparison(value.id);
+        });
+        document.querySelector('#'+value.id+' > .product-size > .left-btn').addEventListener('click', (ev) => {
+
+            var nodeIndex = get_element_index(document.getElementById(value.id));
+            if (nodeIndex > 1) {
+                swap_table_columns(document.querySelectorAll('#ComparisonTable tr'), nodeIndex, nodeIndex - 1);
+            }
+        });
+        document.querySelector('#'+value.id+' > .product-size > .right-btn').addEventListener('click', (ev) => {
+            var nodeIndex = get_element_index(document.getElementById(value.id));
+            if (nodeIndex < document.querySelectorAll('#ComparisonHeader th').length-1) {
+                swap_table_columns(document.querySelectorAll('#ComparisonTable tr'), nodeIndex + 1, nodeIndex);
+            }
         });
         var columnIndex = headerRow.cells.length;
         // iterate and add all size values

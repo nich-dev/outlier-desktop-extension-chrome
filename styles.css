@@ -193,3 +193,7 @@ body {
   line-height: 8px;
   font-size: 0.75em;
 }
+
+#ComparisonHeader > .product > .product-size > svg {
+  margin: 0 0.5em;
+}
