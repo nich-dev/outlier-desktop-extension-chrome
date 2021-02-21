@@ -243,9 +243,14 @@ class ComparisonFragment {
     visibilityBtnId = 'ComparisonVisibilityBtn';
     hiddenText = 'Size Comparisions';
     visibleText = 'Close Comparisions';
+    tableIsVisible = false;
+    tableInitialized = false;
+    comparisonCount = 0;
 
     constructor() {
         this.create_ui();
+        this.initial_data();
+        this.subscribe_changes();
     }
 
     create_ui() {
@@ -263,12 +268,18 @@ class ComparisonFragment {
             switch (container.style.visibility) {
                 case 'collapse':
                     container.style.visibility = 'visible';
+                    this.visibilityBtn.innerText = this.visibleText;
+                    this.tableIsVisible = true;
                     break;
                 case 'visible':
                     container.style.visibility = 'collapse';
+                    this.visibilityBtn.innerText = this.hiddenText + ' (' + this.comparisonCount + ')';;
+                    this.tableIsVisible = false;
                     break;
                 default:
                     container.style.visibility = 'visible';
+                    this.visibilityBtn.innerText = this.visibleText;
+                    this.tableIsVisible = true;
                     this.initial_data();
                     break;
             }
@@ -279,12 +290,14 @@ class ComparisonFragment {
         var fragment = this;
         chrome.storage.local.get([this.COMP_KEY], function(comps) {
             var storedMeasurements = get_json_or_empty_obj(comps['odComparisons']);
-            fragment.populate_table(storedMeasurements);
-            fragment.subscribe_changes();
+            if (fragment.tableIsVisible) {
+                fragment.populate_table(storedMeasurements);
+                fragment.tableInitialized = true;
+            }
+            fragment.update_comparison_count(Object.keys(storedMeasurements).length);
         });
     }
     // TODOS
-    // - show comparison count in btn
     // - show blurb on open of empty comparisons
     // - re-order columns
     subscribe_changes() {
@@ -293,17 +306,20 @@ class ComparisonFragment {
             for (var key in changes) {
                 // we only care about the comparisons value
                 if (key === 'odComparisons' && namespace === 'local') {
-                    var oldComparisons = get_json_or_empty_obj(changes[key].oldValue);
                     var newComparisons = get_json_or_empty_obj(changes[key].newValue);
-                    var keyCountDifference = Object.keys(oldComparisons).length - Object.keys(newComparisons).length;
-                    if (keyCountDifference < 0) { // item added
-                        fragment.populate_table(newComparisons);
-                    } else if (keyCountDifference > 0) { // item removed
-                        var removedKeys = Object.keys(oldComparisons).filter(key => Object.keys(newComparisons).indexOf(key) == -1 ? true : false);
-                        for (let i = 0; i < removedKeys.length; i++) {
-                            fragment.remove_column(removedKeys[i]);
+                    if (fragment.tableInitialized) {
+                        var oldComparisons = get_json_or_empty_obj(changes[key].oldValue);
+                        var keyCountDifference = Object.keys(oldComparisons).length - Object.keys(newComparisons).length;
+                        if (keyCountDifference < 0) { // item added
+                            fragment.populate_table(newComparisons);
+                        } else if (keyCountDifference > 0) { // item removed
+                            var removedKeys = Object.keys(oldComparisons).filter(key => Object.keys(newComparisons).indexOf(key) == -1 ? true : false);
+                            for (let i = 0; i < removedKeys.length; i++) {
+                                fragment.remove_column(removedKeys[i]);
+                            }
                         }
                     }
+                    fragment.update_comparison_count(Object.keys(newComparisons).length);
                 }
             }
           });
@@ -391,6 +407,14 @@ class ComparisonFragment {
                 td = document.createElement('td');
                 trs[j].appendChild(td);
             }
+        }
+    }
+
+    update_comparison_count(count) {
+        console.log('update_comparison_count ' + count)
+        this.comparisonCount = count;
+        if (this.visibilityBtn.innerText.toLowerCase().indexOf('size') > -1) {
+            this.visibilityBtn.innerText = this.hiddenText + ' (' + count + ')';
         }
     }
 }
