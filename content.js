@@ -233,6 +233,7 @@ class NavigationBar {
 
 class ComparisonFragment {
     COMP_KEY = 'odComparisons';
+    REMOVE_SVG = '<svg class="clickable" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" width="18px" height="18px"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"/></svg>';
     TABLE_HTML = '<div id="ComparisonTableContainer"><table id="ComparisonTable" class="sizechart"><tbody><tr id="ComparisonHeader"><th class="thSize">Size</th></tr></tbody></table></div>';
     container; // holder for comparison table
     containerId = 'ComparisonFragment';
@@ -254,8 +255,8 @@ class ComparisonFragment {
         this.visibilityBtn.innerText = this.hiddenText;
         this.container.appendChild(this.visibilityBtn);
         this.container.insertAdjacentHTML('beforeend', this.TABLE_HTML);
+        document.body.appendChild(this.container);
         this.visibilityBtn.addEventListener('click', (ev) =>{
-            console.log(ev);
             var container = document.getElementById('ComparisonTableContainer');
             switch (container.style.visibility) {
                 case 'collapse':
@@ -282,7 +283,11 @@ class ComparisonFragment {
             fragment.subscribe_changes();
         });
     }
-
+    // TODOS
+    // - show comparison count in btn
+    // - show blurb on open of empty comparisons
+    // - re-order columns
+    // - add/remove single columns (check ID in product class)
     subscribe_changes() {
         chrome.storage.onChanged.addListener(function(changes, namespace) {
             for (var key in changes) {
@@ -319,10 +324,13 @@ class ComparisonFragment {
         // measurements is an obj, not an array
         Object.entries(measurements).forEach(([key, value]) => {
             headerRow.insertAdjacentHTML('beforeend',
-                '<th class="product" id="' + value.id + '"><span class="product-name">'
-                + value.name + '</span><span class="product-size">' + value.size
-                + '</span></th>'
+                '<th class="product" id="' + value.id + '"><span class="product-name tooltip">'
+                + value.name + ' ' + this.REMOVE_SVG + '</span><span class="product-size">'
+                + value.size + '</span></th>'
             );
+            document.getElementById(value.id).addEventListener('click', (ev) => {
+                this.remove_comparison(value.id);
+            });
             var columnIndex = headerRow.cells.length;
             // iterate and add all size values
             for (let i = 0; i < value.measurements.length; i++) {
@@ -333,6 +341,21 @@ class ComparisonFragment {
                     '#ComparisonTable > tbody > tr:nth-child('+rowIndex+') > td:nth-child('+columnIndex+')'
                 ).textContent = measurement.value;
             }
+        });
+    }
+
+    // removes a size comparison in local storage
+    remove_comparison(id) {
+        var storageKey = this.COMP_KEY;
+        chrome.storage.local.get([storageKey], function(comps) {
+            var storedMeasurements = comps[storageKey];
+            if (!storedMeasurements) { return }
+            else { storedMeasurements = JSON.parse(storedMeasurements) }
+            delete storedMeasurements[id]
+            storedMeasurements = JSON.stringify(storedMeasurements);
+            chrome.storage.local.set({ odComparisons: storedMeasurements }, function() {
+                console.log('Comparisons updated');
+            });
         });
     }
 
@@ -394,6 +417,7 @@ function main() {
             }
         }
         if (items.odSizeCopmarison === true) {
+            console.log('creating comp frag')
             var comparisonFragment = new ComparisonFragment();
         }
     });
