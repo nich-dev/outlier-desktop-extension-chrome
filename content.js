@@ -10,6 +10,10 @@ function recreate_node(el, withChildren) {
     }
 }
 
+function get_json_or_empty_obj(str) {
+    if (str) { return JSON.parse(str); } else { return {}; }
+}
+
 class SizeChart {
     COMP_KEY = 'odComparisons'
     SVG_COMP_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="20" viewBox="0 0 24 24"><path d="M10 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h5v2h2V1h-2v2zm0 15H5l5-6v6zm9-15h-5v2h5v13l-5-6v9h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path></svg>'
@@ -73,9 +77,7 @@ class SizeChart {
         var id = name.replaceAll(' ', '_').toLowerCase() + '_' + size.toLowerCase();
         var storageKey = this.COMP_KEY;
         chrome.storage.local.get([storageKey], function(comps) {
-            var storedMeasurements = comps[storageKey];
-            if (!storedMeasurements) { storedMeasurements = {}; }
-            else { storedMeasurements = JSON.parse(storedMeasurements) }
+            var storedMeasurements = get_json_or_empty_obj(comps[storageKey]);
             storedMeasurements[id] = { id: id, name: name, size: size, measurements: measurements };
             storedMeasurements = JSON.stringify(storedMeasurements);
             chrome.storage.local.set({ odComparisons: storedMeasurements }, function() {
@@ -276,9 +278,7 @@ class ComparisonFragment {
     initial_data() {
         var fragment = this;
         chrome.storage.local.get([this.COMP_KEY], function(comps) {
-            var storedMeasurements = comps['odComparisons'];
-            if (!storedMeasurements) { storedMeasurements = {}; }
-            else { storedMeasurements = JSON.parse(storedMeasurements) }
+            var storedMeasurements = get_json_or_empty_obj(comps['odComparisons']);
             fragment.populate_table(storedMeasurements);
             fragment.subscribe_changes();
         });
@@ -287,17 +287,24 @@ class ComparisonFragment {
     // - show comparison count in btn
     // - show blurb on open of empty comparisons
     // - re-order columns
-    // - add/remove single columns (check ID in product class)
     subscribe_changes() {
+        var fragment = this;
         chrome.storage.onChanged.addListener(function(changes, namespace) {
             for (var key in changes) {
-              var storageChange = changes[key];
-              console.log('Storage key "%s" in namespace "%s" changed. ' +
-                          'Old value was "%s", new value is "%s".',
-                          key,
-                          namespace,
-                          storageChange.oldValue,
-                          storageChange.newValue);
+                // we only care about the comparisons value
+                if (key === 'odComparisons' && namespace === 'local') {
+                    var oldComparisons = get_json_or_empty_obj(changes[key].oldValue);
+                    var newComparisons = get_json_or_empty_obj(changes[key].newValue);
+                    var keyCountDifference = Object.keys(oldComparisons).length - Object.keys(newComparisons).length;
+                    if (keyCountDifference < 0) { // item added
+                        fragment.populate_table(newComparisons);
+                    } else if (keyCountDifference > 0) { // item removed
+                        var removedKeys = Object.keys(oldComparisons).filter(key => Object.keys(newComparisons).indexOf(key) == -1 ? true : false);
+                        for (let i = 0; i < removedKeys.length; i++) {
+                            fragment.remove_column(removedKeys[i]);
+                        }
+                    }
+                }
             }
           });
     }
@@ -319,44 +326,55 @@ class ComparisonFragment {
 
     // populates complete table with all given measurments
     populate_table(measurements) {
-        console.log(measurements);
-        var headerRow = document.getElementById('ComparisonHeader');
         // measurements is an obj, not an array
         Object.entries(measurements).forEach(([key, value]) => {
-            headerRow.insertAdjacentHTML('beforeend',
-                '<th class="product" id="' + value.id + '"><span class="product-name tooltip">'
-                + value.name + ' ' + this.REMOVE_SVG + '</span><span class="product-size">'
-                + value.size + '</span></th>'
-            );
-            document.getElementById(value.id).addEventListener('click', (ev) => {
-                this.remove_comparison(value.id);
-            });
-            var columnIndex = headerRow.cells.length;
-            // iterate and add all size values
-            for (let i = 0; i < value.measurements.length; i++) {
-                var measurement = value.measurements[i];
-                var rowIndex = this.add_size(measurement.name);
-                this.normalizeTable();
-                document.querySelector(
-                    '#ComparisonTable > tbody > tr:nth-child('+rowIndex+') > td:nth-child('+columnIndex+')'
-                ).textContent = measurement.value;
-            }
+            this.add_measurement_column(value);
         });
+    }
+
+    // adds a column with data from a measurement value
+    add_measurement_column(value) {
+        if (document.getElementById(value.id)) {
+            return; // column already exists
+        }
+        var headerRow = document.getElementById('ComparisonHeader');
+        headerRow.insertAdjacentHTML('beforeend',
+            '<th class="product" id="' + value.id + '"><span class="product-name tooltip">'
+            + value.name + ' ' + this.REMOVE_SVG + '</span><span class="product-size">'
+            + value.size + '</span></th>'
+        );
+        document.getElementById(value.id).addEventListener('click', (ev) => {
+            this.remove_comparison(value.id);
+        });
+        var columnIndex = headerRow.cells.length;
+        // iterate and add all size values
+        for (let i = 0; i < value.measurements.length; i++) {
+            var measurement = value.measurements[i];
+            var rowIndex = this.add_size(measurement.name);
+            this.normalizeTable();
+            var cell = document.querySelector('#ComparisonTable > tbody > tr:nth-child('+rowIndex+') > td:nth-child('+columnIndex+')');
+            cell.textContent = measurement.value;
+            cell.classList.add(value.id);
+        }
     }
 
     // removes a size comparison in local storage
     remove_comparison(id) {
         var storageKey = this.COMP_KEY;
         chrome.storage.local.get([storageKey], function(comps) {
-            var storedMeasurements = comps[storageKey];
-            if (!storedMeasurements) { return }
-            else { storedMeasurements = JSON.parse(storedMeasurements) }
+            var storedMeasurements = get_json_or_empty_obj(comps[storageKey]);
             delete storedMeasurements[id]
             storedMeasurements = JSON.stringify(storedMeasurements);
             chrome.storage.local.set({ odComparisons: storedMeasurements }, function() {
                 console.log('Comparisons updated');
             });
         });
+    }
+
+    // remove a specific column
+    remove_column(id) {
+        document.querySelectorAll('#' + id).forEach(el => el.remove());
+        document.querySelectorAll('.' + id).forEach(el => el.remove());
     }
 
     // used to fill in "empty" spaces where there should be a cell
