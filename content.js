@@ -510,7 +510,6 @@ function main() {
             }
         }
         if (items.odSizeCopmarison === true) {
-            console.log('creating comp frag')
             var comparisonFragment = new ComparisonFragment();
         }
     });
