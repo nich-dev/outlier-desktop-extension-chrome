@@ -313,8 +313,8 @@ class ComparisonFragment {
             fragment.update_comparison_count(Object.keys(storedMeasurements).length);
         });
     }
-    // TODOS
-    // - clear empty rows
+    
+    
     subscribe_changes() {
         var fragment = this;
         chrome.storage.onChanged.addListener(function(changes, namespace) {
@@ -332,6 +332,7 @@ class ComparisonFragment {
                             for (let i = 0; i < removedKeys.length; i++) {
                                 fragment.remove_column(removedKeys[i]);
                             }
+                            fragment.remove_empty_rows();
                         }
                     }
                     fragment.update_comparison_count(Object.keys(newComparisons).length);
@@ -435,6 +436,33 @@ class ComparisonFragment {
                 td = document.createElement('td');
                 trs[j].appendChild(td);
             }
+        }
+    }
+
+    // remove rows where every cell but the first is blank
+    remove_empty_rows() {
+        var tableRows = document.querySelectorAll('#ComparisonTable tr + tr');
+        var rowIndexesToRemove = [];
+        for (let i = 0; i < tableRows.length; i++) {
+            console.log('checking row index '+ i);
+            var remove = true;
+            var cells = tableRows[i].querySelectorAll('td + td');
+            for (let j = 0; j < cells.length; j++) {
+                console.log('checking cell index '+ j);
+                if (cells[j].innerText.trim() !== '') {
+                    console.log('mark not remove '+ i);
+                    remove = false;
+                    break;
+                }
+            }
+            if (remove === true) {
+                rowIndexesToRemove.push(i);
+            }
+        }
+        console.log(rowIndexesToRemove);
+        for (let k = rowIndexesToRemove.length - 1; k > -1; k--) {
+            console.log('removing '+ k);
+            tableRows[rowIndexesToRemove[k]].remove();
         }
     }
 
