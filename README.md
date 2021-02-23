@@ -10,6 +10,7 @@ Various features to make outlier.nyc useable on the Desktop
 * Clicking anywhere after opening the search will close the damn thing
 * Dismantles the horizontal color carousel to show the color images in a desktop friendly grid
 * Adds color swatch by the "Add to cart" table color names
+* Adds ability to store & compare sizes in a bottom popup
 
 Store Link: https://chrome.google.com/webstore/detail/outlier-desktop/nmochjmgfcgiacoaedabgedhacchijcn
 
@@ -19,8 +20,8 @@ Store Link: https://chrome.google.com/webstore/detail/outlier-desktop/nmochjmgfc
 * Show stock counts (default: on)
 * Make menu horizontal (default: on)
 * Dismantle color carousel (default: on)
+* Enable size comparison feature (default: on)
 
-#### Latest Changes (0.3.0)
-* Dismantle color carousel option
-* Adds color swatch by the "Add to cart" table color names
-* Small bug errors showing in the console
+#### Latest Changes (1.0.0)
+* Size comparison tool. Click on a size title to add to a table that is opened by a button in the bottom left.
+* Bumped version to 1, since the leading 0 was bothering me.
