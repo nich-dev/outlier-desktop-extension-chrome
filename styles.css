@@ -180,9 +180,13 @@ body {
 @media all and (min-width: 1250px) {
   #ComparisonTable {
     width: unset;
-    min-width: 900px;
+    min-width: 700px;
     margin: 0 auto;
   }
+}
+
+#ComparisonHeader > th.product {
+  max-width: 3.25em;
 }
 
 #ComparisonHeader > .product > span {
@@ -190,10 +194,10 @@ body {
 }
 
 #ComparisonHeader > .product > .product-name {
-  line-height: 8px;
+  line-height: 1em;
   font-size: 0.75em;
 }
 
 #ComparisonHeader > .product > .product-size > svg {
-  margin: 0 0.5em;
+  margin: 0 2px;
 }

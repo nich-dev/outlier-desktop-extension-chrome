@@ -395,7 +395,7 @@ class ComparisonFragment {
         for (let i = 0; i < value.measurements.length; i++) {
             var measurement = value.measurements[i];
             var rowIndex = this.add_size(measurement.name);
-            this.normalizeTable();
+            this.normalize_table();
             var cell = document.querySelector('#ComparisonTable > tbody > tr:nth-child('+rowIndex+') > td:nth-child('+columnIndex+')');
             cell.textContent = measurement.value;
             cell.classList.add(value.id);
@@ -423,7 +423,7 @@ class ComparisonFragment {
 
     // used to fill in "empty" spaces where there should be a cell
     // copy pasta from https://stackoverflow.com/a/28000575
-    normalizeTable() {
+    normalize_table() {
         var trs = document.getElementById('ComparisonTable').getElementsByTagName('tr'), len = trs.length, max = 0, td;
         // first we search for the longest table row in terms of # of children 
         for (var i = len; i--;) {
