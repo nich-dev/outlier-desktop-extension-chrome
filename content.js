@@ -248,10 +248,12 @@ class NavigationBar {
 }
 
 class CollectionPage {
-    products = {};
+    COLLECTION_HTML = '<div id="ProductCollection"></div>';
+    products = [];
 
     constructor() {
         this.collect_products();
+        this.create_ui();
     }
 
     collect_products() {
@@ -261,17 +263,36 @@ class CollectionPage {
         productVariantMatches.split("\n")
             .filter(str => str.trim().length > 10 )
             .forEach(str => {
-                var id = str.substring(str.indexOf("\(") + 1, str.indexOf("\,"));
-                this.products[id] = { stock: null, price: null }
-                this.products[id].stock = JSON.parse(str.substring(str.indexOf("\{"), str.length - 2));
+                var product = {
+                    id: str.substring(str.indexOf("\(") + 1, str.indexOf("\,")),
+                    stock: JSON.parse(str.substring(str.indexOf("\{"), str.length - 2)),
+                    price: null,
+                    node: null
+                }
+                this.products.push(product);
             });
+        
+        document.querySelectorAll('.product-block').forEach(block => {
+            var id = block.getAttribute('data-product-id');
+            var clone = block.cloneNode(true);
+            clone.classList.remove('product-block');
+            clone.classList.add('collection-item');
+            var index = this.products.findIndex(p => p.id === id);
+            this.products[index].node = clone;
+            this.products[index].price = block.querySelector('.product-block__price').innerText.trim();
+        });
         console.log(this.products);
-        // for productBlock
-        // get id
-        // find last index of id (has func of stock)
-        // find end line, find last closing bracket, make string, turn string to json
     }
-}
+
+    create_ui() {
+        document.querySelector('.wrapper.main-content > .product-blocks').remove();
+        document.querySelector('.wrapper.main-content').insertAdjacentHTML('beforeend', this.COLLECTION_HTML);
+        this.products.forEach(p => {
+            document.getElementById('ProductCollection').appendChild(p.node);
+        });
+        
+    }
+ }
 
 class ComparisonFragment {
     COMP_KEY = 'odComparisons';

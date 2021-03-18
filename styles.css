@@ -202,3 +202,24 @@ body {
   margin: 0 2px;
 }
 
+.DropDownForm .radio-dropdown ul {
+  z-index: unset !important;
+}
+
+#ProductCollection {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+#ProductCollection > .collection-item {
+  flex: 1 0 21%;
+  max-width: 25%;
+}
+
+@media all and (max-width: 950px) {
+  #ProductCollection > .collection-item {
+    flex: 1 0 42%;
+    max-width: 50%;
+  }
+}
