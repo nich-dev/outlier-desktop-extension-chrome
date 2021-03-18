@@ -247,6 +247,32 @@ class NavigationBar {
     }
 }
 
+class CollectionPage {
+    products = {};
+
+    constructor() {
+        this.collect_products();
+    }
+
+    collect_products() {
+        var productBlocks = document.querySelectorAll('.product-block');
+        var productVariantMatches = document.body.outerHTML.substring(document.body.outerHTML.indexOf('addProductVariant'), document.body.outerHTML.length-1000);
+        productVariantMatches = productVariantMatches.substring(0, productVariantMatches.indexOf('</script>'));
+        productVariantMatches.split("\n")
+            .filter(str => str.trim().length > 10 )
+            .forEach(str => {
+                var id = str.substring(str.indexOf("\(") + 1, str.indexOf("\,"));
+                this.products[id] = { stock: null, price: null }
+                this.products[id].stock = JSON.parse(str.substring(str.indexOf("\{"), str.length - 2));
+            });
+        console.log(this.products);
+        // for productBlock
+        // get id
+        // find last index of id (has func of stock)
+        // find end line, find last closing bracket, make string, turn string to json
+    }
+}
+
 class ComparisonFragment {
     COMP_KEY = 'odComparisons';
     REMOVE_SVG = '<svg class="clickable remove-btn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" width="18px" height="18px"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"/></svg>';
@@ -508,6 +534,9 @@ function main() {
             if (items.odProductStocks === true && window.location.href.indexOf("pairings") < 0) {
                 try { product.stock.show_stock_counts(); } catch (error) { console.log(error); }
             }
+        }
+        if (window.location.href.indexOf("collections") > -1) {
+            var collectionPage = new CollectionPage();
         }
         if (items.odSizeCopmarison === true) {
             var comparisonFragment = new ComparisonFragment();
