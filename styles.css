@@ -206,6 +206,10 @@ body {
   z-index: unset !important;
 }
 
+#CollectionTools {
+  margin-top: 2.5em;
+}
+
 #ProductCollection {
   display: flex;
   flex-wrap: wrap;

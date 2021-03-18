@@ -248,8 +248,12 @@ class NavigationBar {
 }
 
 class CollectionPage {
-    COLLECTION_HTML = '<div id="ProductCollection"></div>';
+    FILTER_HTML = '<div id="CollectionTools"><div id="CollectionFilter"><button id="SortCollectionBtn" class="btn btn--small">Sort by price</button></div></div>';
+    UP_UNICODE = 'Sort by price &#129093;';
+    DOWN_UNICODE = 'Sort by price &#129095;';
     products = [];
+    priceOrder = -1; // -1 = desc, 0 = unordered, 1 = asc
+    visibleSizes = []; // if empty show all
 
     constructor() {
         this.collect_products();
@@ -257,7 +261,6 @@ class CollectionPage {
     }
 
     collect_products() {
-        var productBlocks = document.querySelectorAll('.product-block');
         var productVariantMatches = document.body.outerHTML.substring(document.body.outerHTML.indexOf('addProductVariant'), document.body.outerHTML.length-1000);
         productVariantMatches = productVariantMatches.substring(0, productVariantMatches.indexOf('</script>'));
         productVariantMatches.split("\n")
@@ -274,23 +277,44 @@ class CollectionPage {
         
         document.querySelectorAll('.product-block').forEach(block => {
             var id = block.getAttribute('data-product-id');
-            var clone = block.cloneNode(true);
-            clone.classList.remove('product-block');
-            clone.classList.add('collection-item');
+            block.classList.remove('product-block');
+            block.classList.add('collection-item');
+            block.id = 'collectionitem' + id;
             var index = this.products.findIndex(p => p.id === id);
-            this.products[index].node = clone;
-            this.products[index].price = block.querySelector('.product-block__price').innerText.trim();
+            this.products[index].node = block;
+            this.products[index].price = +block.querySelector('.product-block__price').innerText.replaceAll('$', '').trim();
         });
         console.log(this.products);
     }
 
     create_ui() {
-        document.querySelector('.wrapper.main-content > .product-blocks').remove();
-        document.querySelector('.wrapper.main-content').insertAdjacentHTML('beforeend', this.COLLECTION_HTML);
-        this.products.forEach(p => {
+        document.querySelector('.wrapper.main-content').insertAdjacentHTML('afterbegin', this.FILTER_HTML);
+        document.querySelector('.wrapper.main-content > .product-blocks').id = 'ProductCollection';
+        this.products.forEach((p, i) => {
+            p.node.style.order = i;
             document.getElementById('ProductCollection').appendChild(p.node);
         });
-        
+        document.getElementById('SortCollectionBtn').addEventListener('click', () => {
+            if (this.priceOrder >= 0) {
+                this.orderByPrice(-1);
+            } else {
+                this.orderByPrice(1);
+            }
+        });
+    }
+
+    orderByPrice(direction) {
+        this.priceOrder = direction;
+        if (direction >= 0) {
+            this.products = this.products.sort((a, b) => a.price - b.price);
+            document.getElementById('SortCollectionBtn').innerHTML = this.UP_UNICODE;
+        } else {
+            this.products = this.products.sort((a, b) => b.price - a.price);
+            document.getElementById('SortCollectionBtn').innerHTML = this.DOWN_UNICODE;
+        }
+        for (let i = 0; i < this.products.length; i++) {
+            this.products[i].node.style.order = i;
+        }
     }
  }
 
