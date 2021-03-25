@@ -247,6 +247,124 @@ class NavigationBar {
     }
 }
 
+class CollectionPage {
+    FILTER_HTML = '<div id="CollectionTools"><div id="CollectionFilter">'
+        +'<button id="SortCollectionBtn" class="btn btn--small">Sort by price &nbsp;&nbsp;&nbsp;&nbsp;</button>'
+        +'<select name="sizefilter" id="SizeFilter"></select>'
+        +'</div></div>';
+    UP_UNICODE = 'Sort by price &#129093;';
+    DOWN_UNICODE = 'Sort by price &#129095;';
+    products = [];
+    priceOrder = -1; // -1 = desc, 0 = unordered, 1 = asc
+    sizes = []; 
+    sizeOrder = ['XXS','XS','S','M','L','XL','XXL','XXXL'];
+
+    constructor() {
+        this.collect_products();
+        this.get_all_sizes();
+        this.create_ui();
+    }
+
+    collect_products() {
+        var productVariantMatches = document.body.outerHTML.substring(document.body.outerHTML.indexOf('addProductVariant'), document.body.outerHTML.length-1000);
+        productVariantMatches = productVariantMatches.substring(0, productVariantMatches.indexOf('</script>'));
+        productVariantMatches.split("\n")
+            .filter(str => str.trim().length > 10 )
+            .forEach(str => {
+                var product = {
+                    id: str.substring(str.indexOf("\(") + 1, str.indexOf("\,")),
+                    stock: JSON.parse(str.substring(str.indexOf("\{"), str.length - 2)),
+                    price: null, node: null,
+                    availableSizes: []
+                }
+                this.products.push(product);
+            });
+        
+        document.querySelectorAll('.product-block').forEach(block => {
+            var id = block.getAttribute('data-product-id');
+            block.classList.remove('product-block');
+            block.classList.add('collection-item');
+            block.id = 'collectionitem' + id;
+            var index = this.products.findIndex(p => p.id === id);
+            this.products[index].node = block;
+            this.products[index].price = +block.querySelector('.product-block__price').innerText.replaceAll('$', '').trim();
+        });
+    }
+
+    create_ui() {
+        document.getElementById('od-nav-menu').insertAdjacentHTML('afterend', this.FILTER_HTML);
+        document.querySelector('.wrapper.main-content > .product-blocks').id = 'ProductCollection';
+        this.products.forEach((p, i) => {
+            p.node.style.order = i;
+            document.getElementById('ProductCollection').appendChild(p.node);
+        });
+        document.getElementById('SortCollectionBtn').addEventListener('click', () => {
+            if (this.priceOrder >= 0) {
+                this.orderByPrice(-1);
+            } else {
+                this.orderByPrice(1);
+            }
+        });
+        var filter = document.getElementById('SizeFilter');
+        filter.insertAdjacentHTML('beforeend', '<option value="all">All Sizes</option>');
+        this.sizes.forEach(size => {
+            filter.insertAdjacentHTML('beforeend', '<option value="'+size+'">'+size+'</option>');
+        });
+        filter.addEventListener('change', () => this.filter_visibility_by_size(filter.value));
+    }
+
+    orderByPrice(direction) {
+        this.priceOrder = direction;
+        if (direction >= 0) {
+            this.products = this.products.sort((a, b) => a.price - b.price);
+            document.getElementById('SortCollectionBtn').innerHTML = this.UP_UNICODE;
+        } else {
+            this.products = this.products.sort((a, b) => b.price - a.price);
+            document.getElementById('SortCollectionBtn').innerHTML = this.DOWN_UNICODE;
+        }
+        for (let i = 0; i < this.products.length; i++) {
+            this.products[i].node.style.order = i;
+        }
+    }
+
+    filter_visibility_by_size(size) {
+        if (size === 'all') {
+            this.products.forEach(product => product.node.style.display = 'block');
+        } else {
+            this.products.forEach(product => {
+                product.node.style.display = product.availableSizes.indexOf(size) === -1 ? 'none' : 'block';
+            });
+        }
+    }
+
+    get_all_sizes() {
+        this.sizes = []
+        this.products.forEach(product => {
+            Object.keys(product.stock).forEach(stock => {
+                Object.keys(product.stock[stock]).forEach(sizeStock => {
+                    if (product.stock[stock][sizeStock].available) {
+                        this.sizes.indexOf(sizeStock) === -1 ? this.sizes.push(sizeStock) : null;
+                        product.availableSizes.indexOf(sizeStock) === -1 ? product.availableSizes.push(sizeStock) : null;
+                    }
+                });
+            });
+        });
+        // sort by numbers, then named sizes
+        this.sizes.sort((a, b) => {
+            if (isNaN(a) && isNaN(b)) {
+                return this.sizeOrder.indexOf(a) - this.sizeOrder.indexOf(b);
+            } else if (isNaN(a) && !isNaN(b)) {
+                return 1;
+            } else if (!isNaN(a) && isNaN(b)) {
+                return -1;
+            } else {
+                return a - b;
+            }
+        });
+        return this.sizes;
+    }
+ }
+
 class ComparisonFragment {
     COMP_KEY = 'odComparisons';
     REMOVE_SVG = '<svg class="clickable remove-btn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" width="18px" height="18px"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"/></svg>';
@@ -508,6 +626,9 @@ function main() {
             if (items.odProductStocks === true && window.location.href.indexOf("pairings") < 0) {
                 try { product.stock.show_stock_counts(); } catch (error) { console.log(error); }
             }
+        }
+        if (window.location.href.indexOf("collections") > -1) {
+            var collectionPage = new CollectionPage();
         }
         if (items.odSizeCopmarison === true) {
             var comparisonFragment = new ComparisonFragment();
