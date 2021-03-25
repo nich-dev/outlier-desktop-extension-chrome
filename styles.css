@@ -207,7 +207,40 @@ body {
 }
 
 #CollectionTools {
-  margin-top: 2.5em;
+  z-index: 21;
+  left: 0;
+  width: 100vw;
+  text-align: end;
+}
+
+#CollectionFilter {
+  padding: 0 12px;
+}
+
+#CollectionFilter > * {
+  margin: 0 4px;
+  font-size: 0.75rem;
+  vertical-align: top;
+  height: 25px;
+  font-family: "Knockout 92 A", "Knockout 92 B", sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+}
+
+#SortCollectionBtn {
+  padding: 0 24px;
+  border: none !important;
+}
+
+#SizeFilter {
+  background-color: black;
+  color: white;
+  padding: 0 24px;
+  border: none !important;
+  margin-right: 12px;
 }
 
 #ProductCollection {
@@ -221,9 +254,21 @@ body {
   max-width: 25%;
 }
 
+.product-blocks {
+  padding-top: 2.5em;
+}
+
 @media all and (max-width: 950px) {
+  #CollectionFilter {
+    margin: 0;
+  }
+
   #ProductCollection > .collection-item {
     flex: 1 0 42%;
     max-width: 50%;
+  }
+
+  .product-blocks {
+    padding-top: 3.5em;
   }
 }

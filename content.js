@@ -248,15 +248,20 @@ class NavigationBar {
 }
 
 class CollectionPage {
-    FILTER_HTML = '<div id="CollectionTools"><div id="CollectionFilter"><button id="SortCollectionBtn" class="btn btn--small">Sort by price</button></div></div>';
+    FILTER_HTML = '<div id="CollectionTools"><div id="CollectionFilter">'
+        +'<button id="SortCollectionBtn" class="btn btn--small">Sort by price &nbsp;&nbsp;&nbsp;&nbsp;</button>'
+        +'<select name="sizefilter" id="SizeFilter"></select>'
+        +'</div></div>';
     UP_UNICODE = 'Sort by price &#129093;';
     DOWN_UNICODE = 'Sort by price &#129095;';
     products = [];
     priceOrder = -1; // -1 = desc, 0 = unordered, 1 = asc
-    visibleSizes = []; // if empty show all
+    sizes = []; 
+    sizeOrder = ['XXS','XS','S','M','L','XL','XXL','XXXL'];
 
     constructor() {
         this.collect_products();
+        this.get_all_sizes();
         this.create_ui();
     }
 
@@ -269,8 +274,8 @@ class CollectionPage {
                 var product = {
                     id: str.substring(str.indexOf("\(") + 1, str.indexOf("\,")),
                     stock: JSON.parse(str.substring(str.indexOf("\{"), str.length - 2)),
-                    price: null,
-                    node: null
+                    price: null, node: null,
+                    availableSizes: []
                 }
                 this.products.push(product);
             });
@@ -284,11 +289,10 @@ class CollectionPage {
             this.products[index].node = block;
             this.products[index].price = +block.querySelector('.product-block__price').innerText.replaceAll('$', '').trim();
         });
-        console.log(this.products);
     }
 
     create_ui() {
-        document.querySelector('.wrapper.main-content').insertAdjacentHTML('afterbegin', this.FILTER_HTML);
+        document.getElementById('od-nav-menu').insertAdjacentHTML('afterend', this.FILTER_HTML);
         document.querySelector('.wrapper.main-content > .product-blocks').id = 'ProductCollection';
         this.products.forEach((p, i) => {
             p.node.style.order = i;
@@ -301,6 +305,12 @@ class CollectionPage {
                 this.orderByPrice(1);
             }
         });
+        var filter = document.getElementById('SizeFilter');
+        filter.insertAdjacentHTML('beforeend', '<option value="all">All Sizes</option>');
+        this.sizes.forEach(size => {
+            filter.insertAdjacentHTML('beforeend', '<option value="'+size+'">'+size+'</option>');
+        });
+        filter.addEventListener('change', () => this.filter_visibility_by_size(filter.value));
     }
 
     orderByPrice(direction) {
@@ -315,6 +325,43 @@ class CollectionPage {
         for (let i = 0; i < this.products.length; i++) {
             this.products[i].node.style.order = i;
         }
+    }
+
+    filter_visibility_by_size(size) {
+        if (size === 'all') {
+            this.products.forEach(product => product.node.style.display = 'block');
+        } else {
+            this.products.forEach(product => {
+                product.node.style.display = product.availableSizes.indexOf(size) === -1 ? 'none' : 'block';
+            });
+        }
+    }
+
+    get_all_sizes() {
+        this.sizes = []
+        this.products.forEach(product => {
+            Object.keys(product.stock).forEach(stock => {
+                Object.keys(product.stock[stock]).forEach(sizeStock => {
+                    if (product.stock[stock][sizeStock].available) {
+                        this.sizes.indexOf(sizeStock) === -1 ? this.sizes.push(sizeStock) : null;
+                        product.availableSizes.indexOf(sizeStock) === -1 ? product.availableSizes.push(sizeStock) : null;
+                    }
+                });
+            });
+        });
+        // sort by numbers, then named sizes
+        this.sizes.sort((a, b) => {
+            if (isNaN(a) && isNaN(b)) {
+                return this.sizeOrder.indexOf(a) - this.sizeOrder.indexOf(b);
+            } else if (isNaN(a) && !isNaN(b)) {
+                return 1;
+            } else if (!isNaN(a) && isNaN(b)) {
+                return -1;
+            } else {
+                return a - b;
+            }
+        });
+        return this.sizes;
     }
  }
 
