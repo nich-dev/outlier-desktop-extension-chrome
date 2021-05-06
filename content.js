@@ -424,6 +424,7 @@ class ComparisonFragment {
         var fragment = this;
         chrome.storage.local.get([this.COMP_KEY], function(comps) {
             var storedMeasurements = get_json_or_empty_obj(comps['odComparisons']);
+            console.log(storedMeasurements);
             if (fragment.tableIsVisible) {
                 fragment.populate_table(storedMeasurements);
                 fragment.tableInitialized = true;
@@ -627,8 +628,8 @@ function main() {
                 try { product.stock.show_stock_counts(); } catch (error) { console.log(error); }
             }
         }
-        if (window.location.href.indexOf("collections") > -1) {
-            var collectionPage = new CollectionPage();
+        if (window.location.href.indexOf("products") < 1) {
+            try { var collectionPage = new CollectionPage(); } catch (error) { console.log(error); }
         }
         if (items.odSizeCopmarison === true) {
             var comparisonFragment = new ComparisonFragment();

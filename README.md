@@ -22,11 +22,10 @@ Store Link: https://chrome.google.com/webstore/detail/outlier-desktop/nmochjmgfc
 * Dismantle color carousel (default: on)
 * Enable size comparison feature (default: on)
 
-#### Latest Changes (1.1.0)
+#### Latest Changes (1.1.1)
 * Filter by size and sort by price on collection pages
 
 Feature Requests:
-comparison chart on old site
 separate table for pants/tops
 add custom measurement
 expando pic (right click -> open image in new tab -> delete "_220x330_crop_center" in the URL)
