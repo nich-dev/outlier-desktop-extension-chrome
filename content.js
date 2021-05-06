@@ -627,8 +627,7 @@ function main() {
             if (items.odProductStocks === true && window.location.href.indexOf("pairings") < 0) {
                 try { product.stock.show_stock_counts(); } catch (error) { console.log(error); }
             }
-        }
-        if (window.location.href.indexOf("products") < 1) {
+        } else if (window.location.href.indexOf("collections") > -1) {
             try { var collectionPage = new CollectionPage(); } catch (error) { console.log(error); }
         }
         if (items.odSizeCopmarison === true) {
